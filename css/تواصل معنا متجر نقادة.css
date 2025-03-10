@@ -1,0 +1,179 @@
+/* الخلفية تكون متدرجة بس بدون تأثير قوي */
+body {
+    font-family: "Beiruti", sans-serif;
+    background: linear-gradient(to right, #00bfff, #0077cc);
+    color: #333;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.navbar {
+    position: absolute; /* ضروري عشان يبقى فوق الصفحة */
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 18px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 4; /* تأكد إنه فوق كل العناصر */
+    border-radius: 35px;
+    transition: transform 0.3s ease-in-out; /* عشان الحركة تكون سلسة */
+}
+.navbar .menu {
+    display: flex;
+    gap: 15px; /* تباعد مناسب بين العناصر */
+}
+
+.navbar .menu a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    border-radius: 35px;
+}
+
+.navbar .menu a i {
+    margin-right: 8px;
+}
+
+.navbar .menu a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+a{
+text-decoration: none;
+color: black;
+}
+
+/* الحاوية العامة */
+.contact-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 450px;
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* اللوجو */
+.logo img {
+    width: 100px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+/* العناوين */
+h2 {
+    font-size: 24px;
+    color: #0077cc;
+    margin-bottom: 10px;
+}
+
+/* المعلومات */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.info-box {
+font-weight: bold;
+   color:#00ffc0 ;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+}
+
+.info-box i {
+    font-size: 18px;
+    color: #00bfff;
+}
+
+/* الفورم */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.input-box i {
+    color: #0077cc;
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.input-box input,
+.input-box textarea {
+    flex: 1;
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 16px;
+}
+
+button {
+    background: #0077cc;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.3s;
+}
+
+button i {
+    font-size: 18px;
+}
+
+
+/* تأثير Fade In عند تحميل الصفحة */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70%;
+    }
+    .toggle-btn {
+        font-size: 18px;
+        padding: 5px 8px;
+    }
+
+}
