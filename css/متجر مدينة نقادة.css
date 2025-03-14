@@ -1,0 +1,847 @@
+* {
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+/* خلفية الصفحة */
+
+html, body {
+    background: linear-gradient(to right, #00ffea, #00d5ff);
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-family: "Beiruti", sans-serif;
+    max-width: 100%;
+    height:100%;
+    max-height:100% ;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    
+}
+.navbar {
+    position: fixed; /* ضروري عشان يبقى فوق الصفحة */
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 18px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 4; /* تأكد إنه فوق كل العناصر */
+    border-radius: 35px;
+    transition: transform 0.3s ease-in-out; /* عشان الحركة تكون سلسة */
+}
+.navbar .menu {
+    display: flex;
+    gap: 0px; /* تباعد مناسب بين العناصر */
+}
+
+.navbar .menu a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    border-radius: 35px;
+}
+
+.navbar .menu a i {
+    margin-right: 8px;
+}
+
+.navbar .menu a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+/* تصميم الحاوية الأساسية */
+.typing-container {
+font-family: "Beiruti", sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: "Cairo", sans-serif;
+    color: #fff;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 300px;
+    margin: 50px auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* المؤشر اللامع */
+#auto-type::after {
+    content: "|";
+    display: inline-block;
+    animation: blink 0.7s infinite;
+}
+
+/* وميض المؤشر */
+@keyframes blink {
+    50% { opacity: 0; }
+}
+.h-search {
+font-family: "Beiruti", sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #40a1ff;
+    text-align: center;
+}
+/* مربع البحث */
+#search {
+    width: 90%;
+    padding: 10px;
+    padding-left: 40px; /* المسافة بين النص والأيقونة */
+    border: 2px solid #00eaff;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    transition: box-shadow 0.3s ease; /* تجنب تغيير الحجم */
+    
+}
+/* تنسيق الحاوية لتوسيط البحث */
+.search-wrapper{
+position:relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+    padding: 10px; /* يمنع القطع على الشاشات الصغيرة */
+}
+
+/* تنسيق صندوق البحث */
+.search-container {
+position:relative ;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(to right, #00ffea, #00d5ff);
+    padding: 10px;
+    border-radius: 25px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    width: 90%; /* يجعل الحجم مرن */
+    max-width: 400px; /* لا يزيد عن هذا الحجم */
+}
+
+/* تنسيق الإدخال */
+.search-container input {
+    flex: 1; /* يجعل الإدخال يتمدد تلقائيًا */
+    padding: 10px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    border-radius: 20px;
+}
+
+/* تنسيق زر البحث */
+.search-container button {
+    background: white;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* تأثير عند تمرير الماوس */
+.search-container button:hover {
+    background: #f0f0f0;
+}
+
+/* تنسيق الأيقونة */
+.search-container i {
+    font-size: 18px;
+    color: #007bff;
+}
+
+/* صندوق النتائج */
+.search-results {
+    position: absolute;
+    top: 100%; /* تظهر أسفل مربع البحث مباشرة */
+    left: 0;
+    width: 97%;
+    background-color: whitesmoke;
+    border-radius:25px ;
+    border: 3px solid #00ffea;
+    max-height: 200px; /* تجنب تمدد القائمة بشكل مفرط */
+    overflow-y: auto;
+    text-align: center;
+    z-index: 9;
+    display: none; /* إخفاء النتائج مبدئيًا */
+}
+/* تحسين تأثير التركيز دون تغيير الحجم */
+#search:focus {
+    border-color: #0042ff;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+/* تنسيق القائمة */
+#results-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#results-list li a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+}
+
+#results-list li a:hover {
+    background-color: #f0f0f0;
+}
+
+/* عنصر النتيجة */
+.item {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+/* تحسين التجاوب مع الشاشات الصغيرة */
+@media (max-width: 500px) {
+    .search-box {
+        max-width: 90%; /* يستخدم 90% من الشاشة */
+        padding: 8px;
+    }
+    .search-box input {
+        font-size: 14px;
+        padding: 8px;
+    }
+    .search-box button {
+        padding: 8px;
+    }
+    .search-box i {
+        font-size: 16px;
+    }
+}.popup {
+    display: none; /* مخفي افتراضيًا */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 500px;
+    max-height: 80vh; /* يضمن عدم تجاوز 80% من الشاشة */
+    background: linear-gradient(to right, #00d5ff,#00eaff );
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    z-index: 1000;
+    text-align: right; /* محاذاة النص لليمين */
+    overflow-y: auto; /* تفعيل التمرير إذا زاد المحتوى */
+    direction: rtl; /* دعم اللغة العربية */
+}
+
+/* تحسين تنسيق العنوان */
+.popup h3 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #0077cc;
+    margin-bottom: 10px;
+}
+
+/* تحسين النصوص داخل الـ popup */
+.p-terms {
+    font-size: 16px;
+    line-height: 1.8;
+    color:white;
+    text-align: right;
+    font-weight: bold;
+    white-space: pre-line; /* للحفاظ على الفواصل والمسافات بين الأسطر */
+}
+
+/* تحسين مظهر الأقسام */
+.p-terms strong {
+    color: #0077cc;
+    font-size: 18px;
+}
+
+/* تحسين الأزرار */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.close-btn:hover {
+    background: #cc0000;
+}
+
+
+/* الخلفية المعتمة */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 4;
+}
+/* تنسيق الحاوية لتوسيط الأزرار */
+.popup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 25vh;
+    gap: 15px;
+}
+
+/* تنسيق الزر */
+.popup-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 200px; /* تحديد عرض ثابت للأزرار */
+    background: linear-gradient(to right, #00d5ff,#00eaff );
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* تأثير عند تمرير الماوس */
+.popup-btn:hover {
+    background: linear-gradient(to right, #2E8B57, #4CAF50);
+    transform: scale(1.05);
+}
+
+/* تنسيق الأيقونة */
+.popup-btn i {
+    font-size: 20px;    
+}
+/* تنسيق عناصر القائمة */
+.problem {
+    cursor: pointer;
+    margin: 10px 0;
+    padding: 12px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.problem:hover {
+    background: #ddd;
+}
+
+
+/* النص المخفي لكل مشكلة */
+.solution {
+    display: none;
+    padding: 10px;
+    color: whitesmoke;
+    background:#006cff;
+    border-radius: 5px;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+}
+.picon{
+    color:red ;
+    text-align:center ;
+}
+
+.a1{
+    color: red;
+}
+/* أيقونة القواعد والشروط */
+.rules-icon {
+    top: 60%; /* لتكون في مكان مختلف عن أيقونة الاستفسار */
+}
+.rules-pop{
+   position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    border-radius: 10px;
+    z-index: 1000; 
+}
+
+/* الشعار */
+.logo{
+    width: 80%;
+    max-width: 200px;
+    height: auto;
+    margin-top: 25px;
+    justify-content: center;
+    margin-left:10px ;
+}
+
+/* زر سلة المشتريات */
+.cart-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px; /* خليها ثابتة */
+    transform: translateY(70px); /* حركه لأسفل */
+    background: linear-gradient(to right, #00ffea, #00d5ff);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index:7;
+}
+/* نافذة السلة */
+.cart-popup {
+display: none;
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: linear-gradient(to right, #00ffea, #00d5ff);
+padding: 20px;
+box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+border-radius: 10px;
+z-index: 5;
+max-height: 80vh; 
+overflow-y: auto; 
+border: 2px solid black;
+}
+
+.cart-popup button {
+background-color: black;
+color: white;
+border: none;
+padding: 8px 12px;
+border-radius: 5px;
+cursor: pointer;
+margin-top: 10px;
+}
+.p{
+color:red ;
+}
+.p1{
+position: relative;
+top: -10%;
+color:red ;
+
+}
+
+.p2{
+
+color:white ;
+bottom: 28%;
+position: relative;
+}
+
+.p3{
+position: relative;
+bottom: 49%;
+color:green;
+}
+
+/*  نافذة الطلب */
+#checkout-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 35px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 80%;
+    max-width: 400px;
+    max-height: 80vh; /* ✅ ما يخلي الفورم أطول من 80% من الشاشة */
+    overflow-y: auto; /* ✅ لما الفورم يكون طويل، يظهر سكرول */
+    z-index:8 ;
+}
+/* ✅ تحسين شكل العناوين */
+#checkout-form h3, #checkout-form h4 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* ✅ تحسين المدخلات */
+#checkout-form input, #checkout-form select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+/* ✅ تحسين مظهر الفورم عند التركيز */
+#checkout-form input:focus, #checkout-form select:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 8px rgba(255, 152, 0, 0.3);
+    outline: none;
+}
+
+/* ✅ زر الإرسال */
+#checkout-form button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* ✅ زر إرسال الطلب */
+#checkout-form button:nth-of-type(1) {
+    background: #ff5722;
+    color: white;
+}
+
+#checkout-form button:nth-of-type(1):hover {
+    background: #e64a19;
+}
+
+/* ✅ زر الإغلاق */
+#checkout-form button:nth-of-type(2) {
+    background: #bbb;
+    color: white;
+}
+
+#checkout-form button:nth-of-type(2):hover {
+    background: #999;
+}
+
+/* ✅ بيانات الدفع لفوري - تنسيق مميز */
+#fawry-info {
+    background: #fff3e0;
+    padding: 12px;
+    border-left: 5px solid #ff9800;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 14px;
+    text-align: right;
+    font-weight: bold;
+    animation: slideIn 0.3s ease-in-out;
+}
+
+/* ✅ أنيميشن ناعم للظهور */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -55%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ✅ إخفاء العناصر */
+.hidden {
+    display: none;
+}
+.products {
+  display: flex;
+  flex-wrap: wrap; /* السماح بالتفاف العناصر */
+  justify-content: center; /* توسيط العناصر */
+  gap: 10px; /* مسافة بين العناصر */
+}
+
+.product {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+  width: calc(50% - 10px); /* خلي كل منتج ياخذ نصف العرض */
+  max-width: 180px; /* تحديد الحد الأقصى لحجم المنتج */
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease, transform 0.5s ease;
+}
+
+.product.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* في الشاشات الصغيرة تأكدي إنهم يظلوا جنب بعض */
+@media (max-width: 500px) {
+  .product {
+    width: 40%; /* ضمان بقاء منتجين جنب بعض */
+    max-width: 125px; /* منع التصغير الزائد */
+  }
+}
+.product img {
+width: 100%;
+border-radius: 10px;
+}
+
+/* اسم المنتج */
+.product h2 {
+font-size: 18px;
+margin: 10px 0;
+}
+/* زر الشراء */
+.buy-btn {
+    background-color: aqua;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+.openPopup2 {
+    background-color: aqua;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.buy-btn:hover {
+    background-color: green;
+}
+.pop-add{
+    background-color: #2bffd5 ;
+    border: none;
+}
+/* تنسيق القسم */  
+.promo-section {  
+  width: 90%;  
+  max-width: 1200px;  
+  margin: 35px auto;  
+  padding: 0 5px;  
+}  
+
+.promo-card {
+  position: relative; /* تثبيت الطبقات داخل البطاقة */
+  overflow: hidden; /* منع خروج التأثيرات خارج الكارد */
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  animation: float 3s infinite ease-in-out;
+}
+
+.promo-card *:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.promo-card {
+  -webkit-tap-highlight-color: transparent;
+}
+/* جعل المحتوى ظاهرًا داخل حدود الصورة فقط */
+.promo-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;  /* جعل المحتوى ظاهر دائمًا */
+  transform: translateY(0); /* تثبيت المحتوى داخل الصورة */
+}
+
+/* تكبير الصورة دائمًا */
+.promo-card img {
+  width: 100%;
+  display: block;
+  border-radius: 10px;
+  transform: scale(1.05); /* تطبيق التكبير دائمًا */
+}
+
+/* تحريك النصوص */
+.promo-content h2 {
+  font-size: 24px;
+  margin: 10px 0 5px 0;
+  animation: fadeInUp 1s ease-in-out;
+}
+
+.promo-content p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  animation: fadeInUp 1.2s ease-in-out;
+}
+
+/* زر الدعوة لاتخاذ إجراء مع تأثير النبض */
+.btn-cta {
+  display: inline-block;
+  background: #ff6f61;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+/* تأثيرات متحركة */
+
+/* تأثير الاهتزاز البسيط للكارد */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+/* ظهور النصوص بتأثير تدريجي */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* تأثير النبض للزر */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* الفوتر */
+footer {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: black;
+    color: wheat;
+    }
+.social-icons {
+    margin-top: 20px;
+}
+
+.social-icons a {
+    display: inline-block;
+    margin: 0 10px;
+    font-size: 24px;
+    color: white;
+    transition: 0.3s;
+}
+
+.social-icons a:hover {
+    color: #ff6b81;
+    transform: scale(1.2);
+}
+
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70%;
+    }
+
+    .product {
+        width: 48%;
+    }
+
+    .cart-popup {
+        width: 90%;
+        max-width: 300px;
+    }
+
+    .toggle-btn {
+        font-size: 18px;
+        padding: 5px 8px;
+    }
+
+}
+
+@media (max-width: 500px) {
+    .product {
+        width: 100%;
+    }
+
+    .cart-btn {
+        top: 10px;
+        right: 10px;
+        padding: 8px;
+    }
+
+    .promo-content h2 {
+        font-size: 18px;
+    }
+
+    .promo-content p {
+        font-size: 14px;
+    }
+}
+/* تصميم النافذة المنبثقة */
+.terms-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 400px;
+    max-height: 80vh;
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    display: none;
+    z-index: 1000;
+    overflow-y: auto;  
+}
+
+/* محتوى النافذة */
+.terms-content {
+    text-align: center;
+}
+
+/* خلفية شفافة عند فتح النافذة */
+.terms-popup::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
