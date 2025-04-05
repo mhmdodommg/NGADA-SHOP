@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب</title>
+    <link rel="stylesheet" href="css/sign.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script> <!-- تحميل مكتبة التشفير -->
+</head>
+<body>
+
+<div class="login-container">
+    <img src="img/main logo.png" alt="شعار الموقع" class="site-logo">
+    <img src="img/welcome.gif" alt="مرحبًا بك!" class="welcome-gif">
+    <h3 class="welcome-text">مرحبًا بك في موقعنا!</h3>
+    <h2>إنشاء حساب</h2>
+    <form id="register-form">
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="new-username" placeholder="اسم المستخدم" required>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="new-email" placeholder="البريد الإلكتروني" required>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="new-password" placeholder="كلمة المرور" required>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="confirm-password" placeholder="تأكيد كلمة المرور" required>
+        </div>
+
+        <p id="register-error" class="error-message hidden"></p>
+
+       <button type="submit" class="login-btn" id="register-submit">إنشاء الحساب</button>
+    </form>
+    <p class="register-link">لديك حساب؟ <a href="sign.html">تسجيل الدخول</a></p>
+</div>
+<div id="success-popup" class="hidden">
+    <p>✅ تم التسجيل بنجاح! سيتم تحويلك الآن...</p>
+</div>
+<script type="module" src="js/register.js"></script> 
+</body>
+</html>
+ 

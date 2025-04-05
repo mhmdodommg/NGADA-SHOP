@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تواصل معنا</title>
+    <link rel="stylesheet" href="css/contact-us.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Beiruti:wght@200..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="navbar">
+    <div class="menu">
+        <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="sign.html"><i class="fas fa-user"></i> حسابي</a>
+        <a href="about.html"><i class="fas fa-info-circle"></i> عنا</a>
+        <a href="contact-us.html"><i class="fas fa-envelope"></i> تواصل</a>
+    </div>
+</div>   
+
+    <div class="contact-container">
+        <br>
+        <!-- اللوجو -->
+        <div class="logo">
+            <img src="img/logo.png" alt="لوجو المتجر">
+        </div>
+
+        <h2>تواصل معنا</h2>
+        <p>نحن هنا لمساعدتك! لا تتردد في مراسلتنا.</p>
+
+        <div class="contact-info">
+    <div class="info-box">
+        <i class="fas fa-map-marker-alt"></i>
+        <p>نقادة، مصر</p>
+    </div>
+    <div class="info-box">
+        <i class="fas fa-phone-alt"></i>
+        <p>+20 1092182832</p>
+    </div>
+    <div class="info-box">
+        <i class="fas fa-envelope"></i>
+        <p>mmgworksmohammed@gmail.com</p>
+    </div>
+</div>
+
+<form class="contact-form">
+    <div class="input-box">
+        <i class="fas fa-user"></i> <!-- أيقونة المستخدم -->
+        <input type="text" placeholder="الاسم" required>
+    </div>
+    <div class="input-box">
+        <i class="fas fa-envelope"></i> <!-- أيقونة البريد -->
+        <input type="email" placeholder="البريد الإلكتروني" required>
+    </div>
+    <div class="input-box">
+        <i class="fas fa-comment-alt"></i> <!-- أيقونة التعليقات -->
+        <textarea placeholder="اكتب رسالتك هنا..." required></textarea>
+    </div>
+    <button type="submit">
+        <i class="fas fa-paper-plane"></i> <!-- أيقونة الإرسال -->
+        إرسال الرسالة
+    </button>
+</form>
+<script src="js/contact-us.js"></script>
+</body>
+</html>
