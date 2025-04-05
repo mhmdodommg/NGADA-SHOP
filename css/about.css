@@ -1,0 +1,383 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html, body {
+    background: white;
+    color: #333;
+    font-family: "Beiruti", sans-serif;
+    margin: 0;
+    padding: 0;  
+    justify-content: center;
+    align-items: center;
+    height:100vh;    
+    scroll-behavior: smooth;
+}
+.p-by{
+    color: black;
+    text-align:center;
+}
+.navbar {
+    position: fixed; /* ضروري عشان يبقى فوق الصفحة */
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 18px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 4; /* تأكد إنه فوق كل العناصر */
+    border-radius: 35px;
+    transition: transform 0.3s ease-in-out; /* عشان الحركة تكون سلسة */
+}
+.navbar .menu {
+    display: flex;
+    gap: 0px; /* تباعد مناسب بين العناصر */
+}
+.menu a {
+        text-decoration: none;
+        color: black;
+        padding: 10px;
+        transition: 0.3s;
+    }
+.menu a.active {
+    border-bottom: 3px solid #00ffd5;
+    color: #ff5733;
+    text-shadow: 0 0 5px #000000;
+}
+
+.navbar .menu a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    border-radius: 35px;
+}
+
+.navbar .menu a i {
+    margin-right: 8px;
+}
+
+.navbar .menu a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+header {
+    background: linear-gradient(to right, #00ffea, #00d5ff);
+    padding: 20px;
+    text-align: center;
+}
+
+.logo img {
+    width: 120px;
+}
+
+.about {
+    text-align: center;
+    padding: 40px 20px;
+    background: url('background.png') no-repeat center center / cover;
+    background-position: top center; /* جعل الصورة تظهر من الأعلى */
+    color: white;
+}
+
+
+.about {
+    text-align: center;
+    padding: 90px 140px;
+    background: url('background.png') no-repeat center center / cover;
+    background-position: top center;
+    color:white;
+}
+
+.success {
+    padding: 0px 0px;
+    background: url('background2.png') no-repeat center center / cover;
+    background-position: top center;
+}
+
+@media (max-width: 1024px) {
+    .about, .success {
+        background-size: cover; /* في الشاشات الصغيرة والمتوسطة */
+    }
+}
+
+@media (min-width: 1024px) {
+    .about, .success {
+        background-size: contain; /* في الشاشات الكبيرة */
+    }
+}
+.about h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+    color:black ;
+}
+
+.about h1::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 4px;
+    background: #ffcc00;
+    margin: 8px auto 0;
+    animation: expandLine 2s ease-in-out infinite;
+}
+
+@keyframes expandLine {
+    0% {
+        width: 0;
+        opacity: 0;
+    }
+    50% {
+        width: 100%;
+        opacity: 1;
+    }
+    100% {
+        width: 0;
+        opacity: 0;
+    }
+}
+.about p {
+    font-size: 12px;
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1.5s ease-in-out forwards;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.circles-container {
+    display: grid;
+    grid-template-columns: repeat(3, 120px); /* 3 أعمدة بحجم ثابت */
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    width: 100%; /* تأكد أن الحاوية لا تتجاوز حجم الشاشة */
+    max-width: 400px; /* منع التمدد الزائد */
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden; /* منع أي تجاوزات للشاشة */
+}
+
+@keyframes fadeInOutCircle {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+.circle {
+    width: 120px;
+    height: 120px;
+    background: #ffcc00;
+    color: #222;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 50%;
+    animation: fadeInOutCircle 3s ease-in-out infinite; /* تكرار اللوب */
+}
+
+.circle:nth-child(1) { animation-delay: 0.3s; }
+.circle:nth-child(2) { animation-delay: 0.6s; }
+.circle:nth-child(3) { animation-delay: 0.9s; }
+.circle:nth-child(4) { animation-delay: 1.2s; }
+.circle:nth-child(5) { animation-delay: 1.5s; }
+.circle:nth-child(6) { animation-delay: 1.8s; }
+.circle:nth-child(7) { animation-delay: 2.1s; }
+.circle:nth-child(8) { animation-delay: 2.4s; }
+.circle:nth-child(9) { animation-delay: 2.7s; }
+
+.mmg-works-animation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: bold;
+    position: relative;
+}
+
+.letter {
+    display: inline-block;
+    opacity: 1;
+    transform: translateY(0);
+    animation: letter-animation 2.0s ease-in-out infinite alternate;
+    margin: 0 5px;
+}
+
+@keyframes letter-animation {
+    0% {
+        opacity: 0.5;
+        transform: translateY(60px);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0.5;
+        transform: translateY(-10px);
+    }
+}
+.curved-lines-animation {
+    position: relative;
+    width: 300px; /* تحديد عرض ثابت */
+    height: 100px; /* تحديد ارتفاع ثابت */
+    overflow: hidden; /* منع التأثيرات الزائدة على العرض والارتفاع */
+    margin-top: 5px; /* إضافة مساحة بين الحركات والمحتوى الآخر */
+}
+
+.line {
+    position: absolute;
+    background-color: #ff3366;
+    width: 2px;
+    height: 80%;
+    opacity: 0;
+    animation: curved-line-animation 3s ease-in-out infinite;
+}
+
+.line1 {
+    top: 0;
+    left: 0;
+    transform-origin: 50% 50%;
+    animation-delay: 0s;
+}
+
+.line2 {
+    top: 0;
+    right: 0;
+    transform-origin: 50% 50%;
+    animation-delay: 0.5s;
+}
+
+.line3 {
+    top: 0;
+    left: 50%;
+    transform-origin: 50% 50%;
+    animation-delay: 1s;
+}
+
+.line4 {
+    top: 50%;
+    left: 0;
+    transform-origin: 50% 50%;
+    animation-delay: 1.5s;
+}
+
+.line5 {
+    top: 50%;
+    right: 0;
+    transform-origin: 50% 50%;
+    animation-delay: 2s;
+}
+
+@keyframes curved-line-animation {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(0deg) translate(0, 0);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1) rotate(180deg) translate(50px, -50px);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0) rotate(360deg) translate(0, 0);
+    }
+}
+/* الفوتر */
+footer {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: black;
+    color: wheat;
+    text-align:center;
+    align-items:center;
+    }
+.social-icons {
+    margin-top: 20px;
+}
+
+.social-icons a {
+    display: inline-block;
+    margin: 0 10px;
+    font-size: 24px;
+    color: white;
+    transition: 0.3s;
+}
+
+.social-icons a:hover {
+    color: #ff6b81;
+    transform: scale(1.2);
+}
+@keyframes reverseExpandContract {
+    0% {
+        opacity: 0;
+        transform: scale(0.6) rotate(10deg);
+        filter: blur(5px);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.2) rotate(-10deg);
+        filter: blur(2px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: blur(0px);
+    }
+}
+
+body {
+    animation: reverseExpandContract 2s ease-in-out forwards;
+}
+
+/* إضافة التأثير على النصوص */
+.about h1, .about p {
+    animation: reverseExpandContract 2s ease-in-out forwards;
+    animation-delay: 0.5s;
+}
+
+/* تحسين المظهر بإضافة ظلال أثناء الحركة */
+.about h1, .about p {
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+body {
+    background-color: #f7f7f7;
+}

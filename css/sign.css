@@ -1,0 +1,519 @@
+/* استيراد الخط */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+/* إعادة ضبط القيم الافتراضية للمتصفح */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Tajawal', sans-serif;
+}
+
+/* تنسيق خلفية الصفحة */
+body {
+    background: linear-gradient(to right, #00ffea, #00d5ff);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: black;
+    color: white;
+    padding: 8px 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+}
+
+.google-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+.google-btn:hover {
+    background-color: #f5f5f5;
+    border-color: #bbb;
+}
+/* تنسيق حاوية تسجيل الدخول */
+.login-container {
+    background: #E9E9E9;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 100%;
+    max-width: 400px; /* تعديل لجعل الحاوية أكثر مرونة */
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+/* تنسيق العنوان */
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+/* تنسيق مجموعة الإدخال */
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* تنسيق مربعات الإدخال */
+.input-group input {
+    width: 100%;
+    padding: 12px 45px 12px 40px; /* ترك مسافة للأيقونات */
+    text-indent: 25px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* تنسيق الأيقونات داخل مربعات الإدخال */
+.input-group i {
+    position: absolute;
+    left: 12px; 
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ff6f61;
+    font-size: 18px;
+}
+
+/* تنسيق أيقونة إظهار/إخفاء كلمة المرور */
+.input-group .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #777;
+    font-size: 18px;
+}
+
+/* تأثير عند التركيز على الإدخال */
+.input-group input:focus {
+    border-color: #ff6f61;
+    outline: none;
+}
+
+/* تنسيق خيارات تذكرني ونسيت كلمة المرور */
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.remember-forgot a {
+    color: #ff6f61;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+/* تنسيق زر تسجيل الدخول */
+.login-btn {
+    width: 100%;
+    background: #ff6f61;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.login-btn:hover {
+    background: #e65b50;
+}
+
+/* تنسيق زر تسجيل الدخول عبر Google */
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    margin-top: 10px;
+}
+
+.google-btn img {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.google-btn:hover {
+    background: #f4f4f4;
+}
+
+/* تنسيق رابط إنشاء حساب */
+.register-link {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.register-link a {
+    color: #ff6f61;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+/* تأثير التحريك عند الدخول */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* تحسين التوافق مع الشاشات المتوسطة */
+@media (min-width: 768px) {
+    .login-container {
+        max-width: 450px;
+    }
+}
+
+/* تحسين التوافق مع الشاشات الكبيرة */
+@media (min-width: 1024px) {
+    .login-container {
+        max-width: 500px;
+    }
+}
+
+/* تحسين التوافق مع الهواتف الصغيرة جدًا */
+@media (max-width: 400px) {
+    .login-container {
+        padding: 10px;
+    }
+    h2 {
+        font-size: 18px;
+    }
+    .input-group input {
+        font-size: 14px;
+        padding: 10px 35px 10px 8px;
+    }
+    .login-btn {
+        font-size: 16px;
+        padding: 10px;
+    }
+    .google-btn {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+/* تحسين التوافق مع الهواتف الأصغر من 320px */
+@media (max-width: 320px) {
+    .login-container {
+        padding: 8px;
+    }
+    .input-group input {
+        font-size: 13px;
+        padding: 8px;
+    }
+    .login-btn {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+/* إخفاء العناصر عند الحاجة */
+.hidden {
+    display: none;
+}
+
+/* تنسيق زر تسجيل الخروج */
+#logout-btn {
+    background: #ff6f61;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 15px;
+}
+
+#logout-btn:hover {
+    background: #e65b50;
+}
+
+/* تنسيق رسالة الخطأ */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    display: block;
+}
+
+/* تنسيق الشعار */
+.site-logo {
+    width: 80px;
+    margin: 0 auto -20px;
+    display: block;
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+/* تنسيق نص الترحيب */
+.welcome-text {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+/* تنسيق صورة متحركة */
+.welcome-gif {
+    width: 200px;
+    display: block;
+    margin: 0 auto 15px;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+#login-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* تحس/* تنسيق البوب أب */
+.popup {
+    position: fixed;
+    top: 30%; /* رفعه قليلًا */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+/* عند إظهار البوب أب */
+.popup.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -40%);
+}
+
+/* زر الإغلاق */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+}
+
+.close-btn:hover {
+    color: red;
+}
+.hidden {
+    display: none;
+}
+
+#success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #4CAF50;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 18px;
+    display: none;
+}
+
+#success-popup.show {
+    display: block;
+}
+/* تنسيق صورة المستخدم */
+.profile-image-container {
+    position: relative;
+    display: inline-block;
+}
+
+#user-profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #007bff;
+    cursor: pointer;
+    transition: 0.3s;
+    background-color: #f0f0f0; /* اللون الخلفي عند عدم وجود صورة */
+}
+
+/* أيقونة تعديل الصورة */
+.edit-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    background: #007bff;
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.edit-icon:hover {
+    background: #0056b3;
+}
+/* تنسيق النصوص (اسم المستخدم وتاريخ الميلاد) */
+.profile-container .user-info {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.profile-container .user-info h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.profile-container .user-info p {
+    font-size: 16px;
+    color: #777;
+}
+
+/* تنسيق زر العودة */
+.back-button {
+    position: absolute;
+    top: 20px; /* جعل الزر بعيد عن العناصر */
+    left: 20px; /* جعل الزر بعيد عن الحافة */
+    background-color: black;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.back-button:hover {
+    background-color: #e65b50;
+}
+/* تنسيق حقل تاريخ الميلاد */
+.birthday-container {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#user-birthday-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    background-color: #fff;
+    margin-top: 5px;
+    color: #333;
+    text-align: center;
+}
+
+#user-birthday-input:focus {
+    border-color: #ff6f61;
+    outline: none;
+}
+
+#birthday-label {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+/* تصميم الزر */
+.save-btn {
+    background-color: #4CAF50; /* لون الخلفية */
+    border: none; /* إزالة الحدود */
+    color: white; /* لون النص */
+    padding: 15px 32px; /* المسافة حول النص */
+    text-align: center; /* محاذاة النص */
+    text-decoration: none; /* إزالة التسطير */
+    display: inline-block; /* وضع الزر بجانب العناصر الأخرى */
+    font-size: 16px; /* حجم النص */
+    margin: 4px 2px; /* المسافة بين الأزرار */
+    cursor: pointer; /* تغيير المؤشر إلى اليد */
+    border-radius: 8px; /* جعل الزر بزاويا دائرية */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* تأثيرات الانتقال */
+}
+
+/* تأثير عند التمرير فوق الزر */
+.save-btn:hover {
+    background-color: #45a049; /* تغيير اللون عند التمرير */
+    transform: scale(1.05); /* تكبير الزر قليلاً */
+}
+
+/* تأثير عند الضغط على الزر */
+.save-btn:active {
+    background-color: #3e8e41; /* تغيير اللون عند الضغط */
+    transform: scale(0.98); /* تصغير الزر قليلاً */
+}
+
+/* زر "جاري الحفظ" */
+.save-btn.saving {
+    background-color: #FF9800; /* لون الخلفية أثناء الحفظ */
+    cursor: not-allowed; /* تغيير المؤشر إلى غير قابل للنقر */
+}
+
+/* زر "تم الحفظ بنجاح" */
+.save-btn.saved {
+    background-color: #4CAF50; /* اللون الطبيعي بعد الحفظ */
+    cursor: pointer;
+}
