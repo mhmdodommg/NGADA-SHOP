@@ -299,9 +299,14 @@ if (solution.style.display === "none" || solution.style.display === "") {
     let links = document.querySelectorAll(".menu a");
     let currentUrl = window.location.pathname.split("/").pop(); // جلب اسم الصفحة فقط
 
+    // لو الرابط فاضي (يعني في الصفحة الرئيسية)، نعتبرها index.html
+    if (currentUrl === "") {
+        currentUrl = "index.html";  // أو اسم صفحتك الرئيسية لو مختلف
+    }
+
     links.forEach(link => {
         if (link.getAttribute("href") === currentUrl) {
             link.classList.add("active");
-        }        
+        }
     });
-    });
+});
