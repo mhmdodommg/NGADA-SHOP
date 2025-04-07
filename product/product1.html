@@ -178,7 +178,7 @@
         <div id="ratings-list-product1"></div>
     </div>
 </div>
-<script>  
+        <script>  
     let currentRating = 0;  
   
     // التعامل مع النجمات  
@@ -212,21 +212,26 @@
   
     // دالة لتحميل التقييمات من السيرفر
     async function loadRatings(productId) {  
-        const res = await fetch(`/api/ratings?productId=${productId}`);  // إضافة query parameter
-        const savedRatings = await res.json();  
-        const ratingsList = document.getElementById(`ratings-list-${productId}`);  
-        ratingsList.innerHTML = "";  
+        try {
+            const res = await fetch(`/api/ratings?productId=${productId}`);  // إضافة query parameter
+            if (!res.ok) throw new Error('فشل تحميل التقييمات'); // التعامل مع فشل الاستجابة
+            const savedRatings = await res.json();  
+            const ratingsList = document.getElementById(`ratings-list-${productId}`);  
+            ratingsList.innerHTML = "";  
   
-        savedRatings.forEach(rating => {  
-            const ratingItem = document.createElement('div');  
-            ratingItem.classList.add('rating-item');  
-            ratingItem.innerHTML = `  
-                <strong>${rating.username}</strong>  
-                <p>التقييم: ${rating.rating} نجوم</p>  
-                <p>${rating.comment}</p>  
-            `;  
-            ratingsList.appendChild(ratingItem);  
-        });  
+            savedRatings.forEach(rating => {  
+                const ratingItem = document.createElement('div');  
+                ratingItem.classList.add('rating-item');  
+                ratingItem.innerHTML = `  
+                    <strong>${rating.username}</strong>  
+                    <p>التقييم: ${rating.rating} نجوم</p>  
+                    <p>${rating.comment}</p>  
+                `;  
+                ratingsList.appendChild(ratingItem);  
+            });  
+        } catch (error) {
+            console.error('خطأ في تحميل التقييمات:', error);
+        }
     }  
   
     // دالة لإرسال التقييم إلى السيرفر
@@ -244,21 +249,26 @@
   
         const newRating = { productId, username, rating: currentRating, comment };  // إرسال productId مع التقييم
   
-        // إرسال التقييم إلى السيرفر عبر API
-        await fetch('/api/ratings', {  
-            method: 'POST',  
-            headers: { 'Content-Type': 'application/json' },  
-            body: JSON.stringify(newRating)  
-        });  
+        try {
+            const res = await fetch('/api/ratings', {  
+                method: 'POST',  
+                headers: { 'Content-Type': 'application/json' },  
+                body: JSON.stringify(newRating)  
+            });
+
+            if (!res.ok) throw new Error('فشل إرسال التقييم');
   
-        loadRatings(productId);  // إعادة تحميل التقييمات بعد الإرسال
+            loadRatings(productId);  // إعادة تحميل التقييمات بعد الإرسال
   
-        // تفريغ الحقول
-        usernameInput.value = '';  
-        commentInput.value = '';  
-        currentRating = 0;  
+            // تفريغ الحقول
+            usernameInput.value = '';  
+            commentInput.value = '';  
+            currentRating = 0;  
+        } catch (error) {
+            console.error('خطأ في إرسال التقييم:', error);
+        }
     }  
-</script>
+        </script>
     <script src="product.js"></script>
 </body>
 </html>
