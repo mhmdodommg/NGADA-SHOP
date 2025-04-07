@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Beiruti:wght@200..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">  
    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 </head>
 <body>
     
@@ -146,118 +148,123 @@
 </button>   
     <div class="product">
            <a href="javascript:history.back()" class="back-button">《<br>عودة</a>
-        <img src="img/product1.jpg" alt="صورة المنتج" class="product-img">
+        <img src="img/product2.jpg" alt="صورة المنتج" class="product-img">
         <div class="product-info">
-            <h2>شبشب بيتي</h2>
-            <p class="price">السعر: 100 جنيه</p>
-            <p class="description">شبشب بيتي جميل وانيق بخامات ممتازة ومتينة بالوان جميلة ورائعة تدوم طويلا </p>
+            <h2>أيفون ١١ برو ماكس</h2>
+            <p class="price">السعر: 22000 جنيه</p>
+            <p class="description">هاتف أبل الغني عن التعريف جودة وخامة عالية واصلية ، هل تبحث عن الاناقة لقد وجدتها اذا! إنه وقتك </p>
                   <p>:الكمية</p>
-   <div class="quantity-selector" data-price="100">
+   <div class="quantity-selector" data-price="22000">
     <button class="minus">-</button>
     <input type="text" id="quantity" value="1" readonly>
     <button class="plus">+</button>   
 </div>       
-<p class="total-price">الإجمالي: <span id="total">100</span> جنيه</p>
-  <button  class="buy-btn" data-name="شبشب بيتي" data-price="100" onclick="addToCart(this)"onclick="toggleCartPopup()" >إضافة إلى السلة</button>       
+<p class="total-price">الإجمالي: <span id="total">22000</span> جنيه</p>
+  <button  class="buy-btn" data-name="تلفون ايفون ١١  برو ماكس" data-price="22000" onclick="addToCart(this)"onclick="toggleCartPopup()" >إضافة إلى السلة</button>       
     </div>        
-       
- <div class="product">
+
+<div class="product">
     <h1>قيم المنتج</h1>
-    <div class="stars" id="product1">
+    <div class="stars" id="product2">
         <span class="star" data-rating="1">&#9733;</span>
         <span class="star" data-rating="2">&#9733;</span>
         <span class="star" data-rating="3">&#9733;</span>
         <span class="star" data-rating="4">&#9733;</span>
         <span class="star" data-rating="5">&#9733;</span>
     </div>
-    <input type="text" class="re-com" id="username-product1" placeholder="اسمك">
-    <textarea id="comment-product1" class="re-com" placeholder="أضف تعليقك هنا..."></textarea>
-    <button onclick="submitRating('product1')" class="ret-bt">إرسال التقييم</button>
+    <input type="text" class="re-com" id="username-product2" placeholder="اسمك">
+    <textarea id="comment-product2" class="re-com" placeholder="أضف تعليقك هنا..."></textarea>
+    <button onclick="submitRating('product2')" class="ret-bt">إرسال التقييم</button>
     <div class="previous-ratings">
         <h2>التقييمات السابقة</h2>
-        <div id="ratings-list-product1"></div>
+        <div id="ratings-list-product2"></div>
     </div>
 </div>
-<script>  
-    let currentRating = 0;  
-  
-    // التعامل مع النجمات  
-    document.addEventListener('DOMContentLoaded', () => {  
-        const productId = 'product1'; // <-- عدّل دا حسب اسم المنتج
-  
-        // تحميل التقييمات عند فتح الصفحة  
-        loadRatings(productId);  
-  
-        // إعداد النجمات  
-        document.querySelectorAll(`#${productId} .star`).forEach(star => {  
-            star.addEventListener('click', function () {  
-                currentRating = this.getAttribute('data-rating');  
-  
-                // إعادة تعيين كل النجوم  
-                this.closest('.stars').querySelectorAll('.star').forEach(s => s.classList.remove('active'));  
-  
-                // تفعيل النجوم إلى حد النجمة المختارة  
-                for (let i = 0; i < currentRating; i++) {  
-                    this.closest('.stars').children[i].classList.add('active');  
-                }  
-            });  
-        });  
-  
-        // ربط زر الإرسال  
-        const submitButton = document.querySelector(`#submit-rating-${productId}`);  
-        if (submitButton) {  
-            submitButton.addEventListener('click', () => submitRating(productId));  
-        }  
-    });  
-  
-    // دالة لتحميل التقييمات من السيرفر
-    async function loadRatings(productId) {  
-        const res = await fetch(`/api/ratings?productId=${productId}`);  // إضافة query parameter
-        const savedRatings = await res.json();  
-        const ratingsList = document.getElementById(`ratings-list-${productId}`);  
-        ratingsList.innerHTML = "";  
-  
-        savedRatings.forEach(rating => {  
-            const ratingItem = document.createElement('div');  
-            ratingItem.classList.add('rating-item');  
-            ratingItem.innerHTML = `  
-                <strong>${rating.username}</strong>  
-                <p>التقييم: ${rating.rating} نجوم</p>  
-                <p>${rating.comment}</p>  
-            `;  
-            ratingsList.appendChild(ratingItem);  
-        });  
-    }  
-  
-    // دالة لإرسال التقييم إلى السيرفر
-    async function submitRating(productId) {  
-        const usernameInput = document.getElementById(`username-${productId}`);  
-        const commentInput = document.getElementById(`comment-${productId}`);  
-  
-        const username = usernameInput.value.trim();  
-        const comment = commentInput.value.trim();  
-  
-        if (!username || !comment || currentRating === 0) {  
-            alert("رجاءً أكمل البيانات قبل الإرسال");  
-            return;  
-        }  
-  
-        const newRating = { productId, username, rating: currentRating, comment };  // إرسال productId مع التقييم
-  
-        // إرسال التقييم إلى السيرفر عبر API
-        await fetch('/api/ratings', {  
-            method: 'POST',  
-            headers: { 'Content-Type': 'application/json' },  
-            body: JSON.stringify(newRating)  
-        });  
-  
-        loadRatings(productId);  // إعادة تحميل التقييمات بعد الإرسال
-  
-        // تفريغ الحقول
-        usernameInput.value = '';  
-        commentInput.value = '';  
-        currentRating = 0;  
-    }  
+
+<script>
+    // تهيئة Firebase - استبدل هذه القيم من إعدادات مشروعك
+const firebaseConfig = {
+  apiKey: "AIzaSyADxRfJY9-W1TZE-zWXc1zFeiHpidsXbug",
+  authDomain: "coment-a7ac2.firebaseapp.com",
+  projectId: "coment-a7ac2",
+  storageBucket: "coment-a7ac2.firebasestorage.app",
+  messagingSenderId: "1088742650545",
+  appId: "1:1088742650545:web:c66518ea620db96b46e890",
+  measurementId: "G-3VL9ZBX916"
+};
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let currentRating = 0;
+
+    // تحميل التقييمات عند فتح الصفحة
+    function loadRatings(productId) {
+        database.ref('ratings/' + productId).on('value', (snapshot) => {
+            const ratings = snapshot.val() || {};
+            const ratingsList = document.getElementById(`ratings-list-${productId}`);
+            
+            ratingsList.innerHTML = "";
+            
+            Object.values(ratings).forEach(rating => {
+                const ratingItem = document.createElement('div');
+                ratingItem.classList.add('rating-item');
+                ratingItem.innerHTML = `
+                    <strong>${rating.username}</strong>
+                    <p>التقييم: ${rating.rating} نجوم</p>
+                    <p>${rating.comment}</p>
+                    <small>${new Date(rating.date).toLocaleString()}</small>
+                `;
+                ratingsList.appendChild(ratingItem);
+            });
+        });
+    }
+
+    // إرسال التقييم
+    function submitRating(productId) {
+        const username = document.getElementById(`username-${productId}`).value.trim();
+        const comment = document.getElementById(`comment-${productId}`).value.trim();
+        
+        if (!username || !comment || currentRating === 0) {
+            alert("الرجاء إكمال جميع الحقول واختيار التقييم!");
+            return;
+        }
+
+        const newRating = {
+            username,
+            rating: currentRating,
+            comment,
+            date: new Date().toISOString()
+        };
+
+        database.ref('ratings/' + productId).push(newRating)
+            .then(() => {
+                document.getElementById(`username-${productId}`).value = "";
+                document.getElementById(`comment-${productId}`).value = "";
+                currentRating = 0;
+                alert("تم حفظ التقييم بنجاح!");
+            })
+            .catch(error => {
+                console.error("Error saving rating:", error);
+                alert("حدث خطأ أثناء حفظ التقييم");
+            });
+    }
+
+    // تحميل التقييمات عند فتح الصفحة
+    document.addEventListener('DOMContentLoaded', () => {
+        loadRatings('product2');
+        
+        // إعداد النجوم
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', function() {
+                currentRating = this.getAttribute('data-rating');
+                this.closest('.stars').querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+                for (let i = 0; i < currentRating; i++) {
+                    this.closest('.stars').children[i].classList.add('active');
+                }
+            });
+        });
+    });
 </script>
     <script src="product.js"></script>
 </body>
