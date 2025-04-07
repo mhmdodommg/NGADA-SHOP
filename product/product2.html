@@ -72,123 +72,124 @@
 
     </div>
 <script>
-    // تهيئة Firebase - استبدل هذه القيم من إعدادات مشروعك
-    const firebaseConfig = {
-        apiKey: "AIzaSyADxRfJY9-W1TZE-zWXc1zFeiHpidsXbug",
-        authDomain: "coment-a7ac2.firebaseapp.com",
-        databaseURL: "https://coment-a7ac2-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "coment-a7ac2",
-        storageBucket: "coment-a7ac2.appspot.com",
-        messagingSenderId: "1088742650545",
-        appId: "1:1088742650545:web:c66518ea620db96b46e890"
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+ // تهيئة Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyADxRfJY9-W1TZE-zWXc1zFeiHpidsXbug",
+    authDomain: "coment-a7ac2.firebaseapp.com",
+    databaseURL: "https://coment-a7ac2-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "coment-a7ac2",
+    storageBucket: "coment-a7ac2.appspot.com",
+    messagingSenderId: "1088742650545",
+    appId: "1:1088742650545:web:c66518ea620db96b46e890"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-    let currentRating = 0;
+let currentRating = 0;
 
-    // تحميل التقييمات عند فتح الصفحة
-    window.onload = function() {
-        loadRatings(1);  // تأكد من تحميل التقييمات عند دخول الصفحة
-    };
+// تحميل التقييمات عند فتح الصفحة لكل منتج
+window.onload = function() {
+    loadRatings('product1');
+    loadRatings('product2');
+};
 
-    function loadRatings(productId) {
-        database.ref('ratings/' + productId).on('value', (snapshot) => {
-            const ratings = snapshot.val() || {};
-            const ratingsList = document.getElementById(`ratings-list-${productId}`);
-            
-            ratingsList.innerHTML = "";
-            
-            if (Object.keys(ratings).length === 0) {
-                ratingsList.innerHTML = "<p>لا توجد تقييمات لهذا المنتج بعد.</p>";
-            } else {
-                Object.values(ratings).forEach(rating => {
-                    const ratingItem = document.createElement('div');
-                    ratingItem.classList.add('rating-item');
-                    ratingItem.innerHTML = `
-                        <strong>${rating.username}</strong>
-                        <p>التقييم: ${rating.rating} نجوم</p>
-                        <p>${rating.comment}</p>
-                        <small>${new Date(rating.date).toLocaleString()}</small>
-                    `;
-                    ratingsList.appendChild(ratingItem);
-                });
-            }
-        });
-    }
-
-    // إرسال التقييم
-    function submitRating(productId) {
-        const username = document.getElementById(`username-${productId}`).value.trim();
-        const comment = document.getElementById(`comment-${productId}`).value.trim();
+// تحميل التقييمات لكل منتج
+function loadRatings(productId) {
+    database.ref('ratings/' + productId).on('value', (snapshot) => {
+        const ratings = snapshot.val() || {};
+        const ratingsList = document.getElementById(`ratings-list-${productId}`);
         
-        if (!username || !comment || currentRating === 0) {
-            alert("الرجاء إكمال جميع الحقول واختيار التقييم!");
-            return;
-        }
-
-        const newRating = {
-            username,
-            rating: currentRating,
-            comment,
-            date: new Date().toISOString()
-        };
-
-        database.ref('ratings/' + productId).push(newRating)
-            .then(() => {
-                // مسح الحقول بعد الإرسال الناجح
-                document.getElementById(`username-${productId}`).value = "";
-                document.getElementById(`comment-${productId}`).value = "";
-                currentRating = 0;
-                
-                // تمييز النجوم بناءً على التقييم
-                document.querySelectorAll(`#${productId} .star`).forEach(star => {
-                    star.classList.remove('active');
-                });
-
-                showSuccessMessage(); // عرض الرسالة بعد إرسال التقييم بنجاح
-                loadRatings(productId); // إعادة تحميل التقييمات بعد الحفظ
-            })
-            .catch(error => {
-                console.error("Error saving rating:", error);
-                alert("حدث خطأ أثناء حفظ التقييم");
+        ratingsList.innerHTML = "";
+        
+        if (Object.keys(ratings).length === 0) {
+            ratingsList.innerHTML = "<p>لا توجد تقييمات لهذا المنتج بعد.</p>";
+        } else {
+            Object.values(ratings).forEach(rating => {
+                const ratingItem = document.createElement('div');
+                ratingItem.classList.add('rating-item');
+                ratingItem.innerHTML = `
+                    <strong>${rating.username}</strong>
+                    <p>التقييم: ${rating.rating} نجوم</p>
+                    <p>${rating.comment}</p>
+                    <small>${new Date(rating.date).toLocaleString()}</small>
+                `;
+                ratingsList.appendChild(ratingItem);
             });
-    }
-
-    // تمييز النجوم عند الضغط
-    document.querySelectorAll('.star').forEach(star => {
-        star.addEventListener('click', function () {
-            const ratingValue = parseInt(star.getAttribute('data-rating'));
-            currentRating = ratingValue; // حفظ التقييم المحدد
-            
-            // تحديث النجوم المعروضة
-            updateStars(ratingValue);
-        });
+        }
     });
+}
 
-    // تمييز النجوم بناءً على التقييم
-    function updateStars(ratingValue) {
-        document.querySelectorAll('.star').forEach(star => {
-            if (parseInt(star.getAttribute('data-rating')) <= ratingValue) {
-                star.classList.add('active');
-            } else {
+// إرسال التقييم
+function submitRating(productId) {
+    const username = document.getElementById(`username-${productId}`).value.trim();
+    const comment = document.getElementById(`comment-${productId}`).value.trim();
+    
+    if (!username || !comment || currentRating === 0) {
+        alert("الرجاء إكمال جميع الحقول واختيار التقييم!");
+        return;
+    }
+
+    const newRating = {
+        username,
+        rating: currentRating,
+        comment,
+        date: new Date().toISOString()
+    };
+
+    database.ref('ratings/' + productId).push(newRating)
+        .then(() => {
+            // مسح الحقول بعد الإرسال الناجح
+            document.getElementById(`username-${productId}`).value = "";
+            document.getElementById(`comment-${productId}`).value = "";
+            currentRating = 0;
+            
+            // تمييز النجوم بناءً على التقييم
+            document.querySelectorAll(`#${productId} .star`).forEach(star => {
                 star.classList.remove('active');
-            }
+            });
+
+            showSuccessMessage(productId); // عرض الرسالة بعد إرسال التقييم بنجاح
+            loadRatings(productId); // إعادة تحميل التقييمات بعد الحفظ
+        })
+        .catch(error => {
+            console.error("Error saving rating:", error);
+            alert("حدث خطأ أثناء حفظ التقييم");
         });
-    }
+}
 
-    // عرض رسالة "تم حفظ التقييم بنجاح"
-    function showSuccessMessage() {
-        const successMessage = document.getElementById("success-message");
-        successMessage.classList.add("show");
+// تمييز النجوم عند الضغط
+document.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('click', function () {
+        const ratingValue = parseInt(star.getAttribute('data-rating'));
+        currentRating = ratingValue; // حفظ التقييم المحدد
+        
+        // تحديث النجوم المعروضة
+        updateStars(ratingValue);
+    });
+});
 
-        // إخفاء الرسالة بعد 3 ثواني
-        setTimeout(() => {
-            successMessage.classList.remove("show");
-        }, 3000);
-    }
+// تمييز النجوم بناءً على التقييم
+function updateStars(ratingValue) {
+    document.querySelectorAll('.star').forEach(star => {
+        if (parseInt(star.getAttribute('data-rating')) <= ratingValue) {
+            star.classList.add('active');
+        } else {
+            star.classList.remove('active');
+        }
+    });
+}
+
+// عرض رسالة "تم حفظ التقييم بنجاح"
+function showSuccessMessage(productId) {
+    const successMessage = document.getElementById(`success-message-${productId}`);
+    successMessage.classList.add("show");
+
+    // إخفاء الرسالة بعد 3 ثواني
+    setTimeout(() => {
+        successMessage.classList.remove("show");
+    }, 3000);
+}
 </script>
     <script src="product.js"></script>
 </body>
-                                                                                     </html>
+</html>
