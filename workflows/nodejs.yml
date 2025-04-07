@@ -1,0 +1,31 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main  # تأكد أن الفرع اللي ترفع فيه التغييرات هو الفرع الرئيسي (main)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # استخدام أحدث إصدار من Ubuntu
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # يستعرض الشيفرة المصدرية من المستودع
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2  # يقوم بتثبيت Node.js في بيئة GitHub Actions
+        with:
+          node-version: '14'  # تأكد من أنك تستخدم نسخة Node.js المناسبة لمشروعك
+
+      - name: Install dependencies
+        run: npm install  # يقوم بتثبيت التبعيات المطلوبة في مشروعك (مثل Express و غيرها)
+
+      - name: Run server
+        run: node server.js  # يشغّل السيرفر عند رفع التغييرات
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4  # نشر المشروع على GitHub Pages
+        with:
+          branch: gh-pages  # يتم نشر المحتوى على الفرع الذي يعمل GitHub Pages
+          folder: ./  # حدد المجلد الذي يحتوي على ملفات الموقع (الذي يحتوي على ملفات HTML و CSS)
