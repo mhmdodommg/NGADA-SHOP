@@ -245,7 +245,7 @@ document.querySelectorAll(`#${productId} .star`).forEach(star => {
     const newRating = { productId, username, rating: currentRating, comment };
 
     try {
-        const res = await fetch('/api/ratings', {
+        const res = await fetch('product/rating-app/api/ratings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newRating)
