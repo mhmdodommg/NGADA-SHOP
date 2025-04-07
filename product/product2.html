@@ -186,11 +186,11 @@
 const firebaseConfig = {
   apiKey: "AIzaSyADxRfJY9-W1TZE-zWXc1zFeiHpidsXbug",
   authDomain: "coment-a7ac2.firebaseapp.com",
+  databaseURL: "https://coment-a7ac2-default-rtdb.europe-west1.firebasedatabase.app", // ← هنا
   projectId: "coment-a7ac2",
-  storageBucket: "coment-a7ac2.firebasestorage.app",
+  storageBucket: "coment-a7ac2.appspot.com",
   messagingSenderId: "1088742650545",
-  appId: "1:1088742650545:web:c66518ea620db96b46e890",
-  measurementId: "G-3VL9ZBX916"
+  appId: "1:1088742650545:web:c66518ea620db96b46e890"
 };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
@@ -222,49 +222,41 @@ const firebaseConfig = {
 
     // إرسال التقييم
     function submitRating(productId) {
-        const username = document.getElementById(`username-${productId}`).value.trim();
-        const comment = document.getElementById(`comment-${productId}`).value.trim();
-        
-        if (!username || !comment || currentRating === 0) {
-            alert("الرجاء إكمال جميع الحقول واختيار التقييم!");
-            return;
-        }
-
-        const newRating = {
-            username,
-            rating: currentRating,
-            comment,
-            date: new Date().toISOString()
-        };
-
-        database.ref('ratings/' + productId).push(newRating)
-            .then(() => {
-                document.getElementById(`username-${productId}`).value = "";
-                document.getElementById(`comment-${productId}`).value = "";
-                currentRating = 0;
-                alert("تم حفظ التقييم بنجاح!");
-            })
-            .catch(error => {
-                console.error("Error saving rating:", error);
-                alert("حدث خطأ أثناء حفظ التقييم");
-            });
+    const username = document.getElementById(`username-${productId}`).value.trim();
+    const comment = document.getElementById(`comment-${productId}`).value.trim();
+    
+    if (!username || !comment || currentRating === 0) {
+        alert("الرجاء إكمال جميع الحقول واختيار التقييم!");
+        return;
     }
 
-    // تحميل التقييمات عند فتح الصفحة
-    document.addEventListener('DOMContentLoaded', () => {
-        loadRatings('product2');
-        
-        // إعداد النجوم
-        document.querySelectorAll('.star').forEach(star => {
-            star.addEventListener('click', function() {
-                currentRating = this.getAttribute('data-rating');
-                this.closest('.stars').querySelectorAll('.star').forEach(s => s.classList.remove('active'));
-                for (let i = 0; i < currentRating; i++) {
-                    this.closest('.stars').children[i].classList.add('active');
-                }
+    const newRating = {
+        username,
+        rating: currentRating,
+        comment,
+        date: new Date().toISOString()
+    };
+
+    database.ref('ratings/' + productId).push(newRating)
+        .then(() => {
+            // مسح الحقول بعد الإرسال الناجح
+            document.getElementById(`username-${productId}`).value = "";
+            document.getElementById(`comment-${productId}`).value = "";
+            currentRating = 0;
+            
+            // هذا هو الكود الجديد الذي يجب إضافته 
+            document.querySelectorAll(`#${productId} .star`).forEach(star => {
+                star.classList.remove('active');
             });
+          
+            
+            alert("تم حفظ التقييم بنجاح!");
+        })
+        .catch(error => {
+            console.error("Error saving rating:", error);
+            alert("حدث خطأ أثناء حفظ التقييم");
         });
-    });
+}
 </script>
     <script src="product.js"></script>
 </body>
