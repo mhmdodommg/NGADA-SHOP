@@ -63,6 +63,7 @@
             <input type="text" class="re-com" id="username-product2" placeholder="اسمك">
             <textarea id="comment-product2" class="re-com" placeholder="أضف تعليقك هنا..."></textarea>
             <button onclick="submitRating('product2')" class="ret-bt">إرسال التقييم</button>
+            <div id="success-message" class="success-message">تم حفظ التقييم بنجاح!</div>
             <div class="previous-ratings">
                 <h2>التقييمات السابقة</h2>
                 <div id="ratings-list-product2"></div>
@@ -144,6 +145,7 @@
                 });
 
                 showSuccessMessage(); // عرض الرسالة بعد إرسال التقييم بنجاح
+                loadRatings(productId); // إعادة تحميل التقييمات بعد الحفظ
             })
             .catch(error => {
                 console.error("Error saving rating:", error);
@@ -184,7 +186,6 @@
         }, 3000);
     }
 </script>
-    <div id="success-message" class="success-message">تم حفظ التقييم بنجاح!</div>
     <script src="product.js"></script>
 </body>
-        </html>
+    </html>
