@@ -4,7 +4,7 @@ const path = require('path');
 const router = express.Router();
 
 // مسار الملف الذي يخزن فيه التقييمات
-const ratingsFile = path.join(__dirname, 'ratings.json');
+const ratingsFile = path.join(__dirname, '../date/ratings.json'); // تأكد من المسار الصحيح
 
 // تأكد أن الملف موجود
 if (!fs.existsSync(ratingsFile)) {
