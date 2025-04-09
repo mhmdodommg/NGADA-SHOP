@@ -17,10 +17,10 @@
     
     <div class="navbar">
     <div class="menu">
-        <a href="http://localhost:8080/%D9%85%D8%AA%D8%AC%D8%B1%20%D9%85%D8%AF%D9%8A%D9%86%D8%A9%20%D9%86%D9%82%D8%A7%D8%AF%D8%A9.html"><i class="fas fa-home"></i> الرئيسية</a>
-        <a href="account.html"><i class="fas fa-user"></i> حسابي</a>
-        <a href="about.html"><i class="fas fa-info-circle"></i> عنا</a>
-        <a href="http://localhost:8080/%D8%AA%D9%88%D8%A7%D8%B5%D9%84%20%D9%85%D8%B9%D9%86%D8%A7%20%D9%85%D8%AA%D8%AC%D8%B1%20%D9%86%D9%82%D8%A7%D8%AF%D8%A9.html"><i class="fas fa-envelope"></i> تواصل</a>
+        <a href=""><i class="fas fa-home"></i> الرئيسية</a>
+        <a href=""><i class="fas fa-user"></i> حسابي</a>
+        <a href=""><i class="fas fa-info-circle"></i> عنا</a>
+        <a href=""><i class="fas fa-envelope"></i> تواصل</a>
     </div>
 </div>   
    <!-- 🛒 سلة المشتريات -->
@@ -162,29 +162,29 @@
 <p class="total-price">الإجمالي: <span id="total">100</span> جنيه</p>
   <button  class="buy-btn" data-name="شبشب بيتي" data-price="100" onclick="addToCart(this)"onclick="toggleCartPopup()" >إضافة إلى السلة</button>       
     </div>               
-
-        <div class="product">
-            <h1>قيم المنتج</h1>
-            <div class="stars" id="product1">
-                <span class="star" data-rating="1">&#9733;</span>
-                <span class="star" data-rating="2">&#9733;</span>
-                <span class="star" data-rating="3">&#9733;</span>
-                <span class="star" data-rating="4">&#9733;</span>
-                <span class="star" data-rating="5">&#9733;</span>
-            </div>
-            <input type="text" class="re-com" id="username-product1" placeholder="اسمك">
-            <textarea id="comment-product1" class="re-com" placeholder="أضف تعليقك هنا..."></textarea>
-            <button onclick="submitRating('product1')" class="ret-bt">إرسال التقييم</button>
-            <div id="success-message" class="success-message">تم حفظ التقييم بنجاح!</div>
-            <div class="previous-ratings">
-                <h2>التقييمات السابقة</h2>
-                <div id="ratings-list-product1"></div>
-            </div>
-        </div>
-
+<div class="product" id="product1">
+    <h1>قيم المنتج</h1>
+    <div class="stars" id="stars-product1">
+        <span class="star" data-rating="1">&#9733;</span>
+        <span class="star" data-rating="2">&#9733;</span>
+        <span class="star" data-rating="3">&#9733;</span>
+        <span class="star" data-rating="4">&#9733;</span>
+        <span class="star" data-rating="5">&#9733;</span>
     </div>
+    <input type="text" class="re-com" id="username-product1" placeholder="اسمك">
+    <textarea id="comment-product1" class="re-com" placeholder="أضف تعليقك هنا..."></textarea>
+    <button onclick="submitRating('product1')" class="ret-bt">إرسال التقييم</button>
+    <div class="error-message" id="error-message-product1"></div>
+    <div id="success-message-product1" class="success-message">تم حفظ التقييم بنجاح!</div>
+    <div class="previous-ratings">
+        <p id="average-rating-product1" class="average-rating">متوسط التقييم: جاري الحساب...</p>
+        <h2>التقييمات السابقة</h2>
+        <div id="ratings-list-product1"></div>        
+        <div id="rating-stats-product1" class="rating-stats"></div>
+    </div>
+</div>
 <script>
- // تهيئة Firebase
+  // تهيئة Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyADxRfJY9-W1TZE-zWXc1zFeiHpidsXbug",
     authDomain: "coment-a7ac2.firebaseapp.com",
@@ -205,39 +205,173 @@ window.onload = function() {
     loadRatings('product2');
 };
 
+// وظيفة الإبلاغ
+function reportRating(productId, ratingId) {
+    const reportsRef = database.ref(`reports/${productId}/${ratingId}`);
+    reportsRef.push({
+        date: new Date().toISOString(),
+        reason: "تم الإبلاغ من قبل المستخدم"
+    });
+    alert("تم الإبلاغ عن التعليق، شكرًا لك.");
+}
+
 // تحميل التقييمات لكل منتج
 function loadRatings(productId) {
     database.ref('ratings/' + productId).on('value', (snapshot) => {
         const ratings = snapshot.val() || {};
         const ratingsList = document.getElementById(`ratings-list-${productId}`);
+        const statsContainer = document.getElementById(`rating-stats-${productId}`);
         
         ratingsList.innerHTML = "";
-        
+        statsContainer.innerHTML = "";
+
+        let totalRating = 0;
+        let count = 0;
+        let starCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
         if (Object.keys(ratings).length === 0) {
             ratingsList.innerHTML = "<p>لا توجد تقييمات لهذا المنتج بعد.</p>";
         } else {
             Object.values(ratings).forEach(rating => {
+                totalRating += rating.rating;
+                count++;
+                starCounts[rating.rating]++;
+
                 const ratingItem = document.createElement('div');
                 ratingItem.classList.add('rating-item');
                 ratingItem.innerHTML = `
                     <strong>${rating.username}</strong>
-                    <p>التقييم: ${rating.rating} نجوم</p>
+                    <p>التقييم: ${generateStars(rating.rating)}</p>
                     <p>${rating.comment}</p>
                     <small>${new Date(rating.date).toLocaleString()}</small>
+
+                    <div class="useful-rating">
+                        <p>هل كان هذا التقييم مفيدًا؟</p>
+                        <button class="useful-btn" onclick="voteHelpful(true, '${rating.username}', '${productId}')">👍</button>
+                        <button class="useful-btn" onclick="voteHelpful(false, '${rating.username}', '${productId}')">👎</button>
+                        <span id="helpful-count-${rating.username}">عدد الأشخاص الذين وجدوا التقييم مفيدًا: 0</span>
+                        <span id="not-helpful-count-${rating.username}">عدد الأشخاص الذين لم يجدوا التقييم مفيدًا: 0</span>
+                    </div>
+                    <button class="report-btn" onclick="reportRating('${productId}', '${rating.username}')">إبلاغ عن التعليق</button>
                 `;
                 ratingsList.appendChild(ratingItem);
             });
         }
+
+        const average = count > 0 ? (totalRating / count).toFixed(1) : 0;
+        const averageContainer = document.getElementById(`average-rating-${productId}`);
+        if (averageContainer) {
+            averageContainer.innerHTML = `متوسط التقييم: ${generateStars(Math.round(average))} (${average})`;
+        }
+
+        let statsHTML = "<h3>إحصائيات التقييم:</h3>";
+        for (let i = 5; i >= 1; i--) {
+            statsHTML += `<p>${generateStars(i)}: ${starCounts[i]} تقييم</p>`;
+        }
+        statsContainer.innerHTML = statsHTML;
     });
 }
 
+// دالة للتصويت على التقييم
+async function voteHelpful(isHelpful, username, reviewId) {
+    try {
+        const userVoteRef = database.ref(`helpfulVotes/${reviewId}/${username}`);
+        
+        // التحقق من وجود تصويت سابق في Firebase
+        const snapshot = await userVoteRef.once('value');
+        
+        if (snapshot.exists()) {
+            alert("لقد قمت بالتصويت بالفعل على هذا التقييم.");
+            return;
+        }
+
+        // تخزين التصويت الجديد
+        await userVoteRef.set({
+            helpful: isHelpful,
+            date: new Date().toISOString()
+        });
+
+        // تحديث الإحصائيات
+        updateHelpfulStats(reviewId);
+        
+        // تخزين في localStorage لتجنب إعادة التصويت في نفس الجلسة
+        localStorage.setItem(`voted_${reviewId}_${username}`, true);
+        
+    } catch (error) {
+        console.error("Error in voteHelpful:", error);
+        alert("حدث خطأ أثناء تسجيل تصويتك.");
+    }
+}
+
+// دالة لتحديث الإحصائيات (كما هي في الحل السابق)
+function updateHelpfulStats(reviewId) {
+    const reviewRef = database.ref(`helpfulVotes/${reviewId}`);
+    
+    reviewRef.on('value', (snapshot) => {
+        let helpfulCount = 0;
+        let notHelpfulCount = 0;
+        
+        const votes = snapshot.val();
+        if (votes) {
+            Object.values(votes).forEach(vote => {
+                if (vote.helpful) {
+                    helpfulCount++;
+                } else {
+                    notHelpfulCount++;
+                }
+            });
+        }
+
+        // تحديث واجهة المستخدم
+        const reviewElement = document.querySelector(`[data-review-id="${reviewId}"]`);
+        if (reviewElement) {
+            reviewElement.querySelector('.helpful-count').textContent = 
+                `عدد الأشخاص الذين وجدوا التقييم مفيدًا: ${helpfulCount}`;
+            reviewElement.querySelector('.not-helpful-count').textContent = 
+                `عدد الأشخاص الذين لم يجدوا التقييم مفيدًا: ${notHelpfulCount}`;
+        }
+    });
+}
+
+// عند تحميل الصفحة، نتحقق من التصويتات السابقة
+async function checkExistingVotes() {
+    const allReviews = document.querySelectorAll('[data-review-id]');
+    const currentUser = getCurrentUser(); // يجب استبدالها بوظيفة جلب المستخدم الحالي
+    
+    for (const review of allReviews) {
+        const reviewId = review.getAttribute('data-review-id');
+        const userVoteRef = database.ref(`helpfulVotes/${reviewId}/${currentUser}`);
+        
+        const snapshot = await userVoteRef.once('value');
+        if (snapshot.exists()) {
+            localStorage.setItem(`voted_${reviewId}_${currentUser}`, true);
+        }
+    }
+}
+
+// استدعاء الدالة عند تحميل الصفحة
+window.addEventListener('DOMContentLoaded', () => {
+    initializeHelpfulVotes();
+    checkExistingVotes();
+});
 // إرسال التقييم
 function submitRating(productId) {
     const username = document.getElementById(`username-${productId}`).value.trim();
     const comment = document.getElementById(`comment-${productId}`).value.trim();
     
     if (!username || !comment || currentRating === 0) {
-        alert("الرجاء إكمال جميع الحقول واختيار التقييم!");
+        const errorBox = document.getElementById(`error-message-${productId}`);
+        errorBox.textContent = "الرجاء إكمال جميع الحقول واختيار التقييم!";
+        errorBox.classList.add("show");
+
+        setTimeout(() => {
+            errorBox.classList.remove("show");
+        }, 3000);
+        return;
+    }
+
+    if (localStorage.getItem(`rated_${username}_${productId}`)) {
+        alert("لقد قمت بتقييم هذا المنتج بالفعل.");
         return;
     }
 
@@ -250,18 +384,17 @@ function submitRating(productId) {
 
     database.ref('ratings/' + productId).push(newRating)
         .then(() => {
-            // مسح الحقول بعد الإرسال الناجح
             document.getElementById(`username-${productId}`).value = "";
             document.getElementById(`comment-${productId}`).value = "";
             currentRating = 0;
-            
-            // تمييز النجوم بناءً على التقييم
+
             document.querySelectorAll(`#${productId} .star`).forEach(star => {
                 star.classList.remove('active');
             });
 
-            showSuccessMessage(productId); // عرض الرسالة بعد إرسال التقييم بنجاح
-            loadRatings(productId); // إعادة تحميل التقييمات بعد الحفظ
+            showSuccessMessage(productId);
+            loadRatings(productId);
+            localStorage.setItem(`rated_${username}_${productId}`, true); // تخزين أن المستخدم قد قيم
         })
         .catch(error => {
             console.error("Error saving rating:", error);
@@ -273,14 +406,12 @@ function submitRating(productId) {
 document.querySelectorAll('.star').forEach(star => {
     star.addEventListener('click', function () {
         const ratingValue = parseInt(star.getAttribute('data-rating'));
-        currentRating = ratingValue; // حفظ التقييم المحدد
+        currentRating = ratingValue;
         
-        // تحديث النجوم المعروضة
         updateStars(ratingValue);
     });
 });
 
-// تمييز النجوم بناءً على التقييم
 function updateStars(ratingValue) {
     document.querySelectorAll('.star').forEach(star => {
         if (parseInt(star.getAttribute('data-rating')) <= ratingValue) {
@@ -291,15 +422,21 @@ function updateStars(ratingValue) {
     });
 }
 
-// عرض رسالة "تم حفظ التقييم بنجاح"
 function showSuccessMessage(productId) {
     const successMessage = document.getElementById(`success-message-${productId}`);
     successMessage.classList.add("show");
 
-    // إخفاء الرسالة بعد 3 ثواني
     setTimeout(() => {
         successMessage.classList.remove("show");
     }, 3000);
+}
+
+function generateStars(rating) {
+    let stars = "";
+    for (let i = 1; i <= 5; i++) {
+        stars += i <= rating ? `<span class="star-icon">&#9733;</span>` : `<span class="star-icon">&#9734;</span>`;
+    }
+    return stars;
 }
 </script>
     <script src="product.js"></script>
