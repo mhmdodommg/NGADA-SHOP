@@ -17,7 +17,7 @@
     
     <div class="navbar">
     <div class="menu">
-        <a href=""><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="http://localhost:8080/ngada%20shop/index.html"><i class="fas fa-home"></i> الرئيسية</a>
         <a href=""><i class="fas fa-user"></i> حسابي</a>
         <a href=""><i class="fas fa-info-circle"></i> عنا</a>
         <a href=""><i class="fas fa-envelope"></i> تواصل</a>
@@ -174,17 +174,23 @@
     <input type="text" class="re-com" id="username-product1" placeholder="اسمك">
     <textarea id="comment-product1" class="re-com" placeholder="أضف تعليقك هنا..."></textarea>
     <button onclick="submitRating('product1')" class="ret-bt">إرسال التقييم</button>
-    <div class="error-message" id="error-message-product1"></div>
-    <div id="success-message-product1" class="success-message">تم حفظ التقييم بنجاح!</div>
+    
+    <div id="error-message-product1" class="error-message" style="display:none;">
+        الرجاء إدخال اسم وتقييم وتعليق
+    </div>
+    
+    <div id="success-message-product1" class="success-message" style="display:none;">
+        تم حفظ التقييم بنجاح!
+    </div>
+    
     <div class="previous-ratings">
-        <p id="average-rating-product1" class="average-rating">متوسط التقييم: جاري الحساب...</p>
+        <p id="average-rating-product1" class="average-rating"></p>
         <h2>التقييمات السابقة</h2>
-        <div id="ratings-list-product1"></div>        
-        <div id="rating-stats-product1" class="rating-stats"></div>
+        <div id="ratings-list-product1" class="ratings-list"></div>
     </div>
 </div>
 <script>
-  // تهيئة Firebase
+    // تهيئة Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyADxRfJY9-W1TZE-zWXc1zFeiHpidsXbug",
     authDomain: "coment-a7ac2.firebaseapp.com",
@@ -194,249 +200,668 @@ const firebaseConfig = {
     messagingSenderId: "1088742650545",
     appId: "1:1088742650545:web:c66518ea620db96b46e890"
 };
+
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+// متغيرات النظام
 let currentRating = 0;
+const ADMIN_PASSWORD = "admin123"; // كلمة سر لوحة التحكم
 
-// تحميل التقييمات عند فتح الصفحة لكل منتج
+// عند تحميل الصفحة
 window.onload = function() {
+    initStars('product1');
     loadRatings('product1');
-    loadRatings('product2');
+    checkAdminAccess();
+    addStyles(); // إضافة الأنماط ديناميكياً
 };
 
-// وظيفة الإبلاغ
-function reportRating(productId, ratingId) {
-    const reportsRef = database.ref(`reports/${productId}/${ratingId}`);
-    reportsRef.push({
-        date: new Date().toISOString(),
-        reason: "تم الإبلاغ من قبل المستخدم"
+// ============== نظام التقييمات ============== //
+
+// تهيئة النجوم
+function initStars(productId) {
+    const stars = document.querySelectorAll(`#stars-${productId} .star`);
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            currentRating = parseInt(this.getAttribute('data-rating'));
+            updateStars(productId, currentRating);
+        });
     });
-    alert("تم الإبلاغ عن التعليق، شكرًا لك.");
 }
 
-// تحميل التقييمات لكل منتج
+// تحديث حالة النجوم
+function updateStars(productId, rating) {
+    const stars = document.querySelectorAll(`#stars-${productId} .star`);
+    stars.forEach((star, index) => {
+        star.style.color = index < rating ? '#ffc107' : '#ccc';
+    });
+}
+
+// تحميل التقييمات
 function loadRatings(productId) {
-    database.ref('ratings/' + productId).on('value', (snapshot) => {
-        const ratings = snapshot.val() || {};
+    console.log(`جاري تحميل التقييمات للمنتج: ${productId}`);
+    
+    database.ref('ratings/' + productId).orderByChild('date').on('value', (snapshot) => {
+        const ratings = snapshot.val();
+        console.log("البيانات المستلمة:", ratings);
+        
         const ratingsList = document.getElementById(`ratings-list-${productId}`);
-        const statsContainer = document.getElementById(`rating-stats-${productId}`);
+        if (!ratingsList) {
+            console.error(`العنصر ratings-list-${productId} غير موجود`);
+            return;
+        }
         
         ratingsList.innerHTML = "";
-        statsContainer.innerHTML = "";
-
-        let totalRating = 0;
-        let count = 0;
-        let starCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-
-        if (Object.keys(ratings).length === 0) {
-            ratingsList.innerHTML = "<p>لا توجد تقييمات لهذا المنتج بعد.</p>";
-        } else {
-            Object.values(ratings).forEach(rating => {
-                totalRating += rating.rating;
-                count++;
-                starCounts[rating.rating]++;
-
-                const ratingItem = document.createElement('div');
-                ratingItem.classList.add('rating-item');
-                ratingItem.innerHTML = `
-                    <strong>${rating.username}</strong>
-                    <p>التقييم: ${generateStars(rating.rating)}</p>
-                    <p>${rating.comment}</p>
-                    <small>${new Date(rating.date).toLocaleString()}</small>
-
-                    <div class="useful-rating">
-                        <p>هل كان هذا التقييم مفيدًا؟</p>
-                        <button class="useful-btn" onclick="voteHelpful(true, '${rating.username}', '${productId}')">👍</button>
-                        <button class="useful-btn" onclick="voteHelpful(false, '${rating.username}', '${productId}')">👎</button>
-                        <span id="helpful-count-${rating.username}">عدد الأشخاص الذين وجدوا التقييم مفيدًا: 0</span>
-                        <span id="not-helpful-count-${rating.username}">عدد الأشخاص الذين لم يجدوا التقييم مفيدًا: 0</span>
-                    </div>
-                    <button class="report-btn" onclick="reportRating('${productId}', '${rating.username}')">إبلاغ عن التعليق</button>
-                `;
-                ratingsList.appendChild(ratingItem);
-            });
-        }
-
-        const average = count > 0 ? (totalRating / count).toFixed(1) : 0;
-        const averageContainer = document.getElementById(`average-rating-${productId}`);
-        if (averageContainer) {
-            averageContainer.innerHTML = `متوسط التقييم: ${generateStars(Math.round(average))} (${average})`;
-        }
-
-        let statsHTML = "<h3>إحصائيات التقييم:</h3>";
-        for (let i = 5; i >= 1; i--) {
-            statsHTML += `<p>${generateStars(i)}: ${starCounts[i]} تقييم</p>`;
-        }
-        statsContainer.innerHTML = statsHTML;
-    });
-}
-
-// دالة للتصويت على التقييم
-async function voteHelpful(isHelpful, username, reviewId) {
-    try {
-        const userVoteRef = database.ref(`helpfulVotes/${reviewId}/${username}`);
         
-        // التحقق من وجود تصويت سابق في Firebase
-        const snapshot = await userVoteRef.once('value');
-        
-        if (snapshot.exists()) {
-            alert("لقد قمت بالتصويت بالفعل على هذا التقييم.");
+        if (!ratings || Object.keys(ratings).length === 0) {
+            ratingsList.innerHTML = `<div class="no-ratings">لا توجد تقييمات بعد. كن أول من يقيم!</div>`;
             return;
         }
 
-        // تخزين التصويت الجديد
-        await userVoteRef.set({
-            helpful: isHelpful,
-            date: new Date().toISOString()
+        let totalRating = 0;
+        let count = 0;
+
+        Object.entries(ratings).forEach(([ratingId, rating]) => {
+            if (rating.status !== 'removed') {
+                totalRating += rating.rating;
+                count++;
+                
+                const ratingItem = createRatingItem(productId, ratingId, rating);
+                ratingsList.appendChild(ratingItem);
+                loadVoteCounters(productId, ratingId);
+            }
         });
 
-        // تحديث الإحصائيات
-        updateHelpfulStats(reviewId);
-        
-        // تخزين في localStorage لتجنب إعادة التصويت في نفس الجلسة
-        localStorage.setItem(`voted_${reviewId}_${username}`, true);
-        
-    } catch (error) {
-        console.error("Error in voteHelpful:", error);
-        alert("حدث خطأ أثناء تسجيل تصويتك.");
-    }
-}
-
-// دالة لتحديث الإحصائيات (كما هي في الحل السابق)
-function updateHelpfulStats(reviewId) {
-    const reviewRef = database.ref(`helpfulVotes/${reviewId}`);
-    
-    reviewRef.on('value', (snapshot) => {
-        let helpfulCount = 0;
-        let notHelpfulCount = 0;
-        
-        const votes = snapshot.val();
-        if (votes) {
-            Object.values(votes).forEach(vote => {
-                if (vote.helpful) {
-                    helpfulCount++;
-                } else {
-                    notHelpfulCount++;
-                }
-            });
-        }
-
-        // تحديث واجهة المستخدم
-        const reviewElement = document.querySelector(`[data-review-id="${reviewId}"]`);
-        if (reviewElement) {
-            reviewElement.querySelector('.helpful-count').textContent = 
-                `عدد الأشخاص الذين وجدوا التقييم مفيدًا: ${helpfulCount}`;
-            reviewElement.querySelector('.not-helpful-count').textContent = 
-                `عدد الأشخاص الذين لم يجدوا التقييم مفيدًا: ${notHelpfulCount}`;
+        // تحديث متوسط التقييم
+        updateAverageRating(productId, totalRating, count);
+    }, (error) => {
+        console.error("Error loading ratings:", error);
+        const ratingsList = document.getElementById(`ratings-list-${productId}`);
+        if (ratingsList) {
+            ratingsList.innerHTML = `<div class="error-msg">حدث خطأ في تحميل التقييمات</div>`;
         }
     });
 }
 
-// عند تحميل الصفحة، نتحقق من التصويتات السابقة
-async function checkExistingVotes() {
-    const allReviews = document.querySelectorAll('[data-review-id]');
-    const currentUser = getCurrentUser(); // يجب استبدالها بوظيفة جلب المستخدم الحالي
-    
-    for (const review of allReviews) {
-        const reviewId = review.getAttribute('data-review-id');
-        const userVoteRef = database.ref(`helpfulVotes/${reviewId}/${currentUser}`);
+// إنشاء عنصر التقييم
+function createRatingItem(productId, ratingId, rating) {
+    const ratingItem = document.createElement('div');
+    ratingItem.className = 'rating-item';
+    ratingItem.id = `rating-${ratingId}`;
+    ratingItem.innerHTML = `
+        <div class="rating-header">
+            <strong class="rating-username">${rating.username}</strong>
+            <div class="rating-stars">${generateStars(rating.rating)}</div>
+        </div>
+        <p class="rating-comment">${rating.comment}</p>
+        <small class="rating-date">${formatDate(rating.date)}</small>
         
-        const snapshot = await userVoteRef.once('value');
-        if (snapshot.exists()) {
-            localStorage.setItem(`voted_${reviewId}_${currentUser}`, true);
-        }
-    }
+        <div class="rating-actions">
+            <div class="useful-rating">
+                <button class="helpful-btn" onclick="voteHelpful(true, '${ratingId}', '${productId}')">
+                    👍 مفيد (<span id="helpful-count-${productId}-${ratingId}">0</span>)
+                </button>
+                <button class="not-helpful-btn" onclick="voteHelpful(false, '${ratingId}', '${productId}')">
+                    👎 غير مفيد (<span id="not-helpful-count-${productId}-${ratingId}">0</span>)
+                </button>
+            </div>
+            
+            <div class="report-section">
+                <select id="report-reason-${ratingId}" class="report-reason">
+                    <option value="spam">محتوى مزعج</option>
+                    <option value="abuse">إساءة</option>
+                    <option value="wrong">معلومات خاطئة</option>
+                </select>
+                <button class="report-btn" onclick="reportRating('${productId}', '${ratingId}')">
+                    إبلاغ
+                </button>
+            </div>
+        </div>
+    `;
+    return ratingItem;
 }
 
-// استدعاء الدالة عند تحميل الصفحة
-window.addEventListener('DOMContentLoaded', () => {
-    initializeHelpfulVotes();
-    checkExistingVotes();
-});
-// إرسال التقييم
+// إرسال تقييم جديد
 function submitRating(productId) {
     const username = document.getElementById(`username-${productId}`).value.trim();
     const comment = document.getElementById(`comment-${productId}`).value.trim();
     
-    if (!username || !comment || currentRating === 0) {
-        const errorBox = document.getElementById(`error-message-${productId}`);
-        errorBox.textContent = "الرجاء إكمال جميع الحقول واختيار التقييم!";
-        errorBox.classList.add("show");
-
-        setTimeout(() => {
-            errorBox.classList.remove("show");
-        }, 3000);
+    // التحقق من الحقول
+    if (!username) {
+        showAlert('الرجاء إدخال اسمك', 'error');
         return;
     }
-
-    if (localStorage.getItem(`rated_${username}_${productId}`)) {
-        alert("لقد قمت بتقييم هذا المنتج بالفعل.");
+    if (!comment) {
+        showAlert('الرجاء إدخال تعليق', 'error');
+        return;
+    }
+    if (currentRating === 0) {
+        showAlert('الرجاء اختيار تقييم من 1 إلى 5 نجوم', 'error');
         return;
     }
 
     const newRating = {
-        username,
+        username: username,
         rating: currentRating,
-        comment,
-        date: new Date().toISOString()
+        comment: comment,
+        date: new Date().toISOString(),
+        status: 'active'
     };
 
     database.ref('ratings/' + productId).push(newRating)
         .then(() => {
+            // إعادة تعيين الحقول
             document.getElementById(`username-${productId}`).value = "";
             document.getElementById(`comment-${productId}`).value = "";
             currentRating = 0;
-
-            document.querySelectorAll(`#${productId} .star`).forEach(star => {
-                star.classList.remove('active');
-            });
-
-            showSuccessMessage(productId);
-            loadRatings(productId);
-            localStorage.setItem(`rated_${username}_${productId}`, true); // تخزين أن المستخدم قد قيم
+            updateStars(productId, 0);
+            
+            showAlert('شكراً لتقييمك! تم الحفظ بنجاح', 'success');
         })
-        .catch(error => {
-            console.error("Error saving rating:", error);
-            alert("حدث خطأ أثناء حفظ التقييم");
+        .catch((error) => {
+            console.error("Error submitting rating:", error);
+            showAlert('حدث خطأ أثناء حفظ التقييم', 'error');
         });
 }
 
-// تمييز النجوم عند الضغط
-document.querySelectorAll('.star').forEach(star => {
-    star.addEventListener('click', function () {
-        const ratingValue = parseInt(star.getAttribute('data-rating'));
-        currentRating = ratingValue;
-        
-        updateStars(ratingValue);
-    });
-});
+// ============== نظام التصويت (مفيد/غير مفيد) ============== //
 
-function updateStars(ratingValue) {
-    document.querySelectorAll('.star').forEach(star => {
-        if (parseInt(star.getAttribute('data-rating')) <= ratingValue) {
-            star.classList.add('active');
-        } else {
-            star.classList.remove('active');
+function voteHelpful(isHelpful, ratingId, productId) {
+    const userKey = generateUserKey();
+    const voteRef = database.ref(`votes/${productId}/${ratingId}/${userKey}`);
+    
+    // التحقق من التصويت السابق
+    voteRef.once('value').then(snapshot => {
+        if (snapshot.exists()) {
+            showAlert('لقد قمت بالتصويت على هذا التعليق مسبقاً', 'info');
+            return;
+        }
+        
+        // تسجيل التصويت الجديد
+        return voteRef.set({
+            helpful: isHelpful,
+            timestamp: Date.now()
+        });
+    }).then(() => {
+        updateVoteCounters(productId, ratingId);
+        showAlert(`شكراً لك! تم تسجيل تصويتك على أن هذا التعليق ${isHelpful ? 'مفيد' : 'غير مفيد'}`, 'success');
+    }).catch(error => {
+        console.error("Error in voting:", error);
+        showAlert('حدث خطأ أثناء تسجيل تصويتك', 'error');
+    });
+}
+
+function updateVoteCounters(productId, ratingId) {
+    const votesRef = database.ref(`votes/${productId}/${ratingId}`);
+    
+    votesRef.once('value').then(snapshot => {
+        let helpfulCount = 0;
+        let notHelpfulCount = 0;
+        const votes = snapshot.val() || {};
+        
+        Object.values(votes).forEach(vote => {
+            vote.helpful ? helpfulCount++ : notHelpfulCount++;
+        });
+        
+        // تحديث الواجهة
+        const helpfulElement = document.getElementById(`helpful-count-${productId}-${ratingId}`);
+        const notHelpfulElement = document.getElementById(`not-helpful-count-${productId}-${ratingId}`);
+        
+        if (helpfulElement) helpfulElement.textContent = helpfulCount;
+        if (notHelpfulElement) notHelpfulElement.textContent = notHelpfulCount;
+    });
+}
+
+// ============== نظام الإبلاغ ============== //
+
+function reportRating(productId, ratingId) {
+    const reasonSelect = document.getElementById(`report-reason-${ratingId}`);
+    const reason = reasonSelect ? reasonSelect.value : "غير محدد";
+    const reasonText = getReasonText(reason);
+    
+    if (confirm(`هل أنت متأكد من الإبلاغ عن هذا التعليق؟\nالسبب: ${reasonText}`)) {
+        const reportRef = database.ref(`reports/${Date.now()}`);
+        
+        const reportData = {
+            productId: productId,
+            ratingId: ratingId,
+            reason: reason,
+            date: new Date().toISOString(),
+            status: "pending"
+        };
+        
+        reportRef.set(reportData)
+        .then(() => {
+            markAsReported(ratingId);
+            checkReportCount(productId, ratingId);
+            showAlert('تم تسجيل بلاغك بنجاح وسيتم مراجعته', 'success');
+        })
+        .catch(error => {
+            console.error("Error saving report:", error);
+            showAlert('حدث خطأ أثناء تسجيل البلاغ', 'error');
+        });
+    }
+}
+
+function checkReportCount(productId, ratingId) {
+    const reportsRef = database.ref('reports').orderByChild('ratingId').equalTo(ratingId);
+    
+    reportsRef.once('value').then(snapshot => {
+        const reportCount = snapshot.numChildren();
+        if (reportCount >= 3) {
+            database.ref(`ratings/${productId}/${ratingId}/status`).set('under_review')
+                .then(() => {
+                    console.log(`تم وضع التعليق ${ratingId} تحت المراجعة`);
+                });
         }
     });
 }
 
-function showSuccessMessage(productId) {
-    const successMessage = document.getElementById(`success-message-${productId}`);
-    successMessage.classList.add("show");
+// ============== لوحة تحكم المشرف ============== //
 
-    setTimeout(() => {
-        successMessage.classList.remove("show");
-    }, 3000);
+function checkAdminAccess() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminKey = urlParams.get('admin');
+    
+    if (adminKey === ADMIN_PASSWORD) {
+        showAdminPanel();
+        loadReports();
+    }
+}
+
+function showAdminPanel() {
+    const panel = document.createElement('div');
+    panel.id = 'admin-panel';
+    panel.innerHTML = `
+        <div class="admin-panel-header">
+            <h3>لوحة تحكم المشرف</h3>
+            <button onclick="closeAdminPanel()" class="close-admin-btn">✕</button>
+        </div>
+        <div class="reports-container">
+            <h4>البلاغات الجديدة</h4>
+            <div id="reports-list" class="reports-list"></div>
+        </div>
+    `;
+    document.body.appendChild(panel);
+    addAdminPanelStyles();
+}
+
+function loadReports() {
+    database.ref('reports').orderByChild('status').equalTo('pending').on('value', (snapshot) => {
+        const reports = snapshot.val() || {};
+        const reportsList = document.getElementById('reports-list');
+        if (!reportsList) return;
+        
+        reportsList.innerHTML = "";
+        
+        if (Object.keys(reports).length === 0) {
+            reportsList.innerHTML = '<p class="no-reports">لا توجد بلاغات جديدة</p>';
+            return;
+        }
+
+        Object.entries(reports).forEach(([reportId, report]) => {
+            const reportItem = createReportItem(reportId, report);
+            reportsList.appendChild(reportItem);
+        });
+    });
+}
+
+function createReportItem(reportId, report) {
+    const item = document.createElement('div');
+    item.className = 'report-item';
+    item.innerHTML = `
+        <div class="report-header">
+            <span class="report-id">#${reportId.substr(-6)}</span>
+            <span class="report-date">${formatDate(report.date)}</span>
+        </div>
+        <div class="report-details">
+            <p><strong>المنتج:</strong> ${report.productId}</p>
+            <p><strong>السبب:</strong> ${getReasonText(report.reason)}</p>
+        </div>
+        <div class="report-actions">
+            <button onclick="handleReport('${reportId}', 'delete', '${report.productId}', '${report.ratingId}')" class="delete-btn">
+                حذف التعليق
+            </button>
+            <button onclick="handleReport('${reportId}', 'ignore')" class="ignore-btn">
+                تجاهل البلاغ
+            </button>
+        </div>
+    `;
+    return item;
+}
+
+function handleReport(reportId, action, productId, ratingId) {
+    const updates = {
+        status: 'resolved',
+        action: action,
+        resolvedAt: new Date().toISOString()
+    };
+    
+    if (action === 'delete' && productId && ratingId) {
+        database.ref(`ratings/${productId}/${ratingId}/status`).set('removed')
+            .then(() => {
+                showAlert('تم حذف التعليق بنجاح', 'success');
+            });
+    }
+    
+    database.ref(`reports/${reportId}`).update(updates)
+        .then(() => {
+            loadReports();
+        });
+}
+
+// ============== وظائف مساعدة ============== //
+
+function generateUserKey() {
+    if (!localStorage.getItem('userKey')) {
+        localStorage.setItem('userKey', Math.random().toString(36).substr(2, 9));
+    }
+    return 'user_' + localStorage.getItem('userKey');
 }
 
 function generateStars(rating) {
     let stars = "";
     for (let i = 1; i <= 5; i++) {
-        stars += i <= rating ? `<span class="star-icon">&#9733;</span>` : `<span class="star-icon">&#9734;</span>`;
+        stars += i <= rating ? '★' : '☆';
     }
     return stars;
+}
+
+function updateAverageRating(productId, totalRating, count) {
+    const average = count > 0 ? (totalRating / count).toFixed(1) : 0;
+    const averageElement = document.getElementById(`average-rating-${productId}`);
+    if (averageElement) {
+        averageElement.innerHTML = `متوسط التقييم: ${generateStars(Math.round(average))} <span class="average-number">(${average} من 5)</span>`;
+    }
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleString('ar-EG');
+}
+
+function getReasonText(reason) {
+    const reasons = {
+        'spam': 'محتوى مزعج',
+        'abuse': 'إساءة',
+        'wrong': 'معلومات خاطئة',
+        'other': 'أسباب أخرى'
+    };
+    return reasons[reason] || reason;
+}
+
+function markAsReported(ratingId) {
+    const ratingElement = document.getElementById(`rating-${ratingId}`);
+    if (ratingElement) {
+        ratingElement.classList.add('reported');
+    }
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type}`;
+    alertDiv.textContent = message;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
+}
+
+// ============== إضافة الأنماط ديناميكياً ============== //
+
+function addStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        /* أنماط التقييمات */
+        .rating-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .rating-item.reported {
+            border-left: 3px solid #f44336;
+            background-color: #ffebee;
+        }
+        
+        .rating-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .rating-stars {
+            color: #ffc107;
+            font-size: 18px;
+        }
+        
+        .rating-comment {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        .rating-date {
+            color: #757575;
+            font-size: 12px;
+        }
+        
+        .rating-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .useful-rating {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .helpful-btn, .not-helpful-btn {
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .helpful-btn {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .not-helpful-btn {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .report-section {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .report-reason {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .report-btn {
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        /* لوحة التحكم */
+        #admin-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 350px;
+            max-height: 80vh;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .admin-panel-header {
+            background: #1976d2;
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-admin-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .reports-container {
+            padding: 15px;
+        }
+        
+        .reports-list {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .report-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .report-id {
+            font-weight: bold;
+        }
+        
+        .report-date {
+            color: #757575;
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .delete-btn, .ignore-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .delete-btn {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .ignore-btn {
+            background: #e0e0e0;
+            color: #424242;
+        }
+        
+        /* التنبيهات */
+        .alert {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: white;
+            z-index: 1001;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .alert-success {
+            background: #4caf50;
+        }
+        
+        .alert-error {
+            background: #f44336;
+        }
+        
+        .alert-info {
+            background: #2196f3;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* العناصر العامة */
+        .no-ratings, .no-reports, .error-msg {
+            text-align: center;
+            padding: 20px;
+            color: #757575;
+        }
+        
+        .average-rating {
+            font-size: 16px;
+            margin: 15px 0;
+        }
+        
+        .average-number {
+            color: #ff9800;
+            font-weight: bold;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function addAdminPanelStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        #admin-panel {
+            font-family: Arial, sans-serif;
+        }
+        
+        #admin-panel h3, #admin-panel h4 {
+            margin: 0;
+        }
+        
+        .reports-container h4 {
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function closeAdminPanel() {
+    const panel = document.getElementById('admin-panel');
+    if (panel) {
+        panel.remove();
+    }
 }
 </script>
     <script src="product.js"></script>
