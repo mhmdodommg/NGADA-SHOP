@@ -9,9 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Beiruti:wght@200..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">  
-   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-       <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 </head>
 <body>
     
@@ -181,7 +181,7 @@
     
     <div id="success-message-product1" class="success-message" style="display:none;">
         تم حفظ التقييم بنجاح!
-    </div> 
+    </div> </p>    
         <h2>التقييمات السابقة</h2>
         <div id="ratings-list-product1" class="ratings-list"></div>
     </div>
@@ -200,10 +200,18 @@ const firebaseConfig = {
 
 // Initialize Firebase
 let database;
+let auth;
+
 try {
-    firebase.initializeApp(firebaseConfig);
+    const app = firebase.initializeApp(firebaseConfig);
     database = firebase.database();
+    auth = firebase.auth();
     console.log("Firebase initialized successfully");
+    
+    // تسجيل الدخول المجهول التلقائي
+    auth.signInAnonymously()
+        .then(() => console.log("تم التسجيل المجهول بنجاح"))
+        .catch(error => console.error("خطأ في التسجيل المجهول:", error));
 } catch (error) {
     console.error("Firebase initialization error:", error);
 }
@@ -213,12 +221,24 @@ let currentRating = 0;
 const ADMIN_PASSWORD = "admin123";
 
 // عند تحميل الصفحة
-window.onload = function() {
+window.onload = async function() {
+    await initAuth();
     initStars('product1');
     loadRatings('product1');
     checkAdminAccess();
     addStyles();
 };
+
+// ============== نظام المصادقة ============== //
+async function initAuth() {
+    try {
+        await auth.signInAnonymously();
+        console.log("المستخدم المجهول جاه��:", auth.currentUser.uid);
+    } catch (error) {
+        console.error("فشل في المصادقة المجهولة:", error);
+        showAlert('حدث خطأ في تهيئة النظام، يرجى إعادة تحميل الصفحة', 'error');
+    }
+}
 
 // ============== نظام النجوم ============== //
 function initStars(productId) {
@@ -239,58 +259,64 @@ function updateStars(productId, rating) {
 }
 
 // ============== نظام التقييمات ============== //
-function loadRatings(productId) {
-    console.log(`جاري تحميل التقييمات للمنتج: ${productId}`);
-    
-    const ratingsRef = database.ref('ratings/' + productId).orderByChild('date');
+async function loadRatings(productId) {
     const ratingsList = document.getElementById(`ratings-list-${productId}`);
-    
-    if (!ratingsList) {
-        console.error(`العنصر ratings-list-${productId} غير موجود`);
-        return;
-    }
-    
+    if (!ratingsList) return;
+
     ratingsList.innerHTML = '<div class="loading">جاري تحميل التقييمات...</div>';
-    
-    ratingsRef.on('value', 
-        (snapshot) => {
-            const ratings = snapshot.val();
-            console.log("تم تحميل التقييمات بنجاح:", ratings);
-            
-            ratingsList.innerHTML = "";
-            
-            if (!ratings || Object.keys(ratings).length === 0) {
-                ratingsList.innerHTML = `<div class="no-ratings">لا توجد تقييمات بعد. كن أول من يقيم!</div>`;
-                return;
-            }
 
-            let totalRating = 0;
-            let count = 0;
-
-            Object.entries(ratings).forEach(([ratingId, rating]) => {
-                if (rating.status !== 'removed') {
-                    totalRating += rating.rating;
-                    count++;
-                    
-                    const ratingItem = createRatingItem(productId, ratingId, rating);
-                    ratingsList.appendChild(ratingItem);
-                    
-                    loadVotesForRating(productId, ratingId);
-                }
-            });
-
-            updateAverageRating(productId, totalRating, count);
-        },
-        (error) => {
-            console.error("Error loading ratings:", error);
-            ratingsList.innerHTML = `
-                <div class="error-msg">
-                    حدث خطأ في تحميل التقييمات
-                    <button onclick="loadRatings('${productId}')">إعادة المحاولة</button>
-                </div>
-            `;
+    try {
+        const snapshot = await database.ref(`ratings/${productId}`).orderByChild('date').once('value');
+        const ratings = snapshot.val() || {};
+        
+        ratingsList.innerHTML = "";
+        
+        if (Object.keys(ratings).length === 0) {
+            ratingsList.innerHTML = '<div class="no-ratings">لا توجد تقييمات بعد. كن أول من يقيم!</div>';
+            return;
         }
-    );
+
+        let totalRating = 0;
+        let count = 0;
+
+        for (const [ratingId, rating] of Object.entries(ratings)) {
+            if (rating.status === 'active') {
+                totalRating += rating.rating;
+                count++;
+                
+                const ratingItem = createRatingItem(productId, ratingId, rating);
+                ratingsList.appendChild(ratingItem);
+                
+                await loadVotesForRating(productId, ratingId);
+            }
+        }
+
+        updateAverageRating(productId, totalRating, count);
+    } catch (error) {
+        console.error("Error loading ratings:", error);
+        ratingsList.innerHTML = `
+            <div class="error-msg">
+                حدث خطأ في تحميل التقييمات
+                <button onclick="loadRatings('${productId}')">إعادة المحاولة</button>
+            </div>
+        `;
+    }
+}
+
+async function loadVotesForRating(productId, ratingId) {
+    try {
+        const snapshot = await database.ref(`votes/${productId}/${ratingId}`).once('value');
+        const votes = snapshot.val() || {};
+        
+        let helpful = 0, notHelpful = 0;
+        Object.values(votes).forEach(vote => {
+            vote.vote ? helpful++ : notHelpful++;
+        });
+        
+        updateVoteUI(productId, ratingId, helpful, notHelpful);
+    } catch (error) {
+        console.error("Error loading votes:", error);
+    }
 }
 
 function createRatingItem(productId, ratingId, rating) {
@@ -299,10 +325,10 @@ function createRatingItem(productId, ratingId, rating) {
     ratingItem.id = `rating-${ratingId}`;
     ratingItem.innerHTML = `
         <div class="rating-header">
-            <strong class="rating-username">${rating.username}</strong>
+            <strong class="rating-username">${sanitizeHtml(rating.username)}</strong>
             <div class="rating-stars">${generateStars(rating.rating)}</div>
         </div>
-        <p class="rating-comment">${rating.comment}</p>
+        <p class="rating-comment">${sanitizeHtml(rating.comment)}</p>
         <small class="rating-date">${formatDate(rating.date)}</small>
         
         <div class="vote-actions">
@@ -330,67 +356,102 @@ function createRatingItem(productId, ratingId, rating) {
     `;
     return ratingItem;
 }
-
-function submitRating(productId) {
-    const username = document.getElementById(`username-${productId}`).value.trim();
-    const comment = document.getElementById(`comment-${productId}`).value.trim();
-    
-    if (!username || !comment || currentRating === 0) {
-        showAlert('الرجاء إكمال جميع الحقول واختيار التقييم', 'error');
-        return;
-    }
-
-    const newRating = {
-        username: username,
-        rating: currentRating,
-        comment: comment,
-        date: new Date().toISOString(),
-        status: 'active'
-    };
-
+async function submitRating(productId) {
     const submitBtn = document.querySelector(`button[onclick="submitRating('${productId}')"]`);
     const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'جاري الحفظ...';
-    submitBtn.disabled = true;
+    
+    try {
+        submitBtn.textContent = 'جاري التحضير...';
+        submitBtn.disabled = true;
 
-    database.ref('ratings/' + productId).push(newRating)
-        .then(() => {
-            document.getElementById(`username-${productId}`).value = "";
-            document.getElementById(`comment-${productId}`).value = "";
-            currentRating = 0;
-            updateStars(productId, 0);
-            
-            showAlert('تم حفظ تقييمك بنجاح', 'success');
-            loadRatings(productId);
-            
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        })
-        .catch(error => {
-            console.error("Error submitting rating:", error);
-            showAlert('حدث خطأ أثناء حفظ التقييم', 'error');
-            
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
+        // 1. التأكد من المصادقة
+        let user = auth.currentUser;
+        if (!user) {
+            submitBtn.textContent = 'جاري التسجيل...';
+            const userCredential = await auth.signInAnonymously();
+            user = userCredential.user;
+        }
+
+        // 2. جمع البيانات والتحقق منها
+        const username = document.getElementById(`username-${productId}`).value.trim();
+        const comment = document.getElementById(`comment-${productId}`).value.trim();
+
+        if (!username || username.length < 3) {
+            throw new Error("الاسم يجب أن يكون 3 أحرف على الأقل");
+        }
+
+        if (!comment || comment.length < 10) {
+            throw new Error("التعليق يجب أن يكون 10 أحرف على الأقل");
+        }
+
+        if (currentRating < 1 || currentRating > 5) {
+            throw new Error("التقييم يجب أن يكون بين 1 و 5 نجوم");
+        }
+
+        // 3. تحضير كائن التقييم مع التأكد من أنواع البيانات
+        const newRating = {
+  username: username,
+  rating: Number(currentRating), // التأكد من أنه رقم
+  comment: comment,
+  date: new Date().toISOString(),
+  status: 'active', // يجب أن تكون 'active' عند الإنشاء
+  userId: auth.currentUser.uid // استخدام uid مباشرة
+};
+
+        // 4. محاولة الحفظ مع معالجة الأخطاء التفصيلية
+        submitBtn.textContent = 'جاري الحفظ...';
+        
+        const ratingsRef = database.ref(`ratings/${productId}`);
+        await ratingsRef.push(newRating)
+            .catch(error => {
+                // معالجة أخطاء Firebase بشكل مفصل
+                if (error.code === 'PERMISSION_DENIED') {
+                    throw new Error("لا تملك صلاحية إضافة التقييم. يرجى المحاولة لاحقاً");
+                } else {
+                    throw new Error(`فشل في حفظ التقييم: ${error.message}`);
+                }
+            });
+
+        // 5. إعادة تعيين النموذج بعد النجاح
+        document.getElementById(`username-${productId}`).value = "";
+        document.getElementById(`comment-${productId}`).value = "";
+        currentRating = 0;
+        updateStars(productId, 0);
+        
+        showAlert('تم حفظ تقييمك بنجاح', 'success');
+        await loadRatings(productId);
+        
+    } catch (error) {
+        console.error("Error details:", {
+            error: error,
+            firebaseError: error.code ? {
+                code: error.code,
+                message: error.message,
+                details: error.details
+            } : null
         });
+        
+        showAlert(`حدث خطأ: ${error.message}`, 'error');
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
 }
 
 // ============== نظام التصويت ============== //
 let isVoting = false;
 
 async function voteHelpful(isHelpful, ratingId, productId) {
-    if (isVoting) {
-        console.log('تصويت قيد المعالجة بالفعل');
-        return;
-    }
-    
+    if (isVoting) return;
     isVoting = true;
-    showLoading(true, productId, ratingId);
-    
+
     try {
-        const userId = getUserId();
-        const voteRef = database.ref(`votes/${productId}/${ratingId}/${userId}`);
+        const user = auth.currentUser;
+        if (!user) throw new Error("يجب تسجيل الدخول أولاً");
+
+        showLoading(true, productId, ratingId);
         
+        const voteRef = database.ref(`votes/${productId}/${ratingId}/${user.uid}`);
         const snapshot = await voteRef.once('value');
         const previousVote = snapshot.exists() ? snapshot.val().vote : null;
         
@@ -405,7 +466,7 @@ async function voteHelpful(isHelpful, ratingId, productId) {
             await voteRef.set({
                 vote: isHelpful,
                 timestamp: Date.now(),
-                userId: userId
+                userId: user.uid
             });
             
             if (previousVote === null) {
@@ -426,33 +487,11 @@ async function voteHelpful(isHelpful, ratingId, productId) {
         
     } catch (error) {
         console.error("Error in voting:", error);
-        showAlert('حدث خطأ أثناء التصويت: ' + error.message, 'error');
+        showAlert(`حدث خطأ: ${error.message}`, 'error');
     } finally {
         isVoting = false;
         showLoading(false, productId, ratingId);
     }
-}
-
-function loadVotesForRating(productId, ratingId) {
-    database.ref(`votes/${productId}/${ratingId}`).once('value').then(snapshot => {
-        const votes = snapshot.val() || {};
-        let helpful = 0, notHelpful = 0;
-        
-        Object.values(votes).forEach(vote => {
-            if (vote.vote) helpful++;
-            else notHelpful++;
-        });
-        
-        updateVoteUI(productId, ratingId, helpful, notHelpful);
-    });
-}
-
-function updateVoteUI(productId, ratingId, helpful, notHelpful) {
-    const helpfulElement = document.getElementById(`helpful-count-${productId}-${ratingId}`);
-    const notHelpfulElement = document.getElementById(`not-helpful-count-${productId}-${ratingId}`);
-    
-    if (helpfulElement) helpfulElement.textContent = helpful;
-    if (notHelpfulElement) notHelpfulElement.textContent = notHelpful;
 }
 
 function updateCountersUI(productId, ratingId, deltaHelpful, deltaNotHelpful, currentVote) {
@@ -493,16 +532,82 @@ function showLoading(show, productId, ratingId) {
     }
 }
 
-// ============== وظائف مساعدة ============== //
-function getUserId() {
-    let userId = localStorage.getItem('vote_user_id');
-    if (!userId) {
-        userId = 'visitor_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('vote_user_id', userId);
+// ============== نظام الإبلاغ ============== //
+async function reportRating(productId, ratingId) {
+    try {
+        const user = auth.currentUser;
+        if (!user) throw new Error("يجب تسجيل الدخول أولاً");
+
+        const reasonSelect = document.getElementById(`report-reason-${ratingId}`);
+        const reason = reasonSelect ? reasonSelect.value : "other";
+        const reasonText = getReasonText(reason);
+        
+        if (!confirm(`هل أنت متأكد من الإبلاغ عن هذا التعليق؟\nالسبب: ${reasonText}`)) {
+            return;
+        }
+
+        const reportData = {
+            productId: productId,
+            ratingId: ratingId,
+            reason: reason,
+            date: new Date().toISOString(),
+            status: "pending",
+            reportedBy: user.uid
+        };
+
+        await database.ref(`reports/${Date.now()}`).set(reportData);
+        
+        markAsReported(ratingId);
+        showAlert('تم تسجيل بلاغك بنجاح وسيتم مراجعته', 'success');
+        
+    } catch (error) {
+        console.error("Error saving report:", error);
+        showAlert(`حدث خطأ: ${error.message}`, 'error');
     }
-    return userId;
 }
 
+// ============== لوحة التحكم ============== //
+function checkAdminAccess() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminKey = urlParams.get('admin');
+    
+    if (adminKey === ADMIN_PASSWORD) {
+        showAdminPanel();
+        loadReports();
+    }
+}
+
+async function loadReports() {
+    try {
+        const reportsList = document.getElementById('reports-list');
+        if (!reportsList) return;
+        
+        reportsList.innerHTML = '<div class="loading">جاري تحميل البلاغات...</div>';
+
+        const snapshot = await database.ref('reports').orderByChild('status').equalTo('pending').once('value');
+        const reports = snapshot.val() || {};
+        
+        reportsList.innerHTML = "";
+        
+        if (Object.keys(reports).length === 0) {
+            reportsList.innerHTML = '<p class="no-reports">لا توجد بلاغات جديدة</p>';
+            return;
+        }
+
+        for (const [reportId, report] of Object.entries(reports)) {
+            const reportItem = createReportItem(reportId, report);
+            reportsList.appendChild(reportItem);
+        }
+    } catch (error) {
+        console.error("Error loading reports:", error);
+        const reportsList = document.getElementById('reports-list');
+        if (reportsList) {
+            reportsList.innerHTML = '<div class="error">حدث خطأ في تحميل البلاغات</div>';
+        }
+    }
+}
+
+// ============== وظائف مساعدة ============== //
 function generateStars(rating) {
     let stars = "";
     for (let i = 1; i <= 5; i++) {
@@ -520,48 +625,11 @@ function updateAverageRating(productId, totalRating, count) {
 }
 
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleString('ar-EG');
-}
-
-function showAlert(message, type) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type}`;
-    alertDiv.textContent = message;
-    document.body.appendChild(alertDiv);
-    
-    setTimeout(() => {
-        alertDiv.remove();
-    }, 3000);
-}
-
-// ============== نظام الإبلاغ ============== //
-function reportRating(productId, ratingId) {
-    const reasonSelect = document.getElementById(`report-reason-${ratingId}`);
-    const reason = reasonSelect ? reasonSelect.value : "غير محدد";
-    const reasonText = getReasonText(reason);
-    
-    if (confirm(`هل أنت متأكد من الإبلاغ عن هذا التعليق؟\nالسبب: ${reasonText}`)) {
-        const reportRef = database.ref(`reports/${Date.now()}`);
-        
-        const reportData = {
-            productId: productId,
-            ratingId: ratingId,
-            reason: reason,
-            date: new Date().toISOString(),
-            status: "pending"
-        };
-        
-        reportRef.set(reportData)
-        .then(() => {
-            markAsReported(ratingId);
-            checkReportCount(productId, ratingId);
-            showAlert('تم تسجيل بلاغك بنجاح وسيتم مراجعته', 'success');
-        })
-        .catch(error => {
-            console.error("Error saving report:", error);
-            showAlert('حدث خطأ أثناء تسجيل البلاغ', 'error');
-        });
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleString('ar-EG');
+    } catch (e) {
+        return dateString;
     }
 }
 
@@ -582,117 +650,21 @@ function markAsReported(ratingId) {
     }
 }
 
-function checkReportCount(productId, ratingId) {
-    const reportsRef = database.ref('reports').orderByChild('ratingId').equalTo(ratingId);
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type}`;
+    alertDiv.textContent = message;
+    document.body.appendChild(alertDiv);
     
-    reportsRef.once('value').then(snapshot => {
-        const reportCount = snapshot.numChildren();
-        if (reportCount >= 3) {
-            database.ref(`ratings/${productId}/${ratingId}/status`).set('under_review')
-                .then(() => {
-                    console.log(`تم وضع التعليق ${ratingId} تحت المراجعة`);
-                });
-        }
-    });
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
 }
 
-// ============== لوحة التحكم ============== //
-function checkAdminAccess() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const adminKey = urlParams.get('admin');
-    
-    if (adminKey === ADMIN_PASSWORD) {
-        showAdminPanel();
-        loadReports();
-    }
-}
-
-function showAdminPanel() {
-    const panel = document.createElement('div');
-    panel.id = 'admin-panel';
-    panel.innerHTML = `
-        <div class="admin-panel-header">
-            <h3>لوحة تحكم المشرف</h3>
-            <button onclick="closeAdminPanel()" class="close-admin-btn">✕</button>
-        </div>
-        <div class="reports-container">
-            <h4>البلاغات الجديدة</h4>
-            <div id="reports-list" class="reports-list"></div>
-        </div>
-    `;
-    document.body.appendChild(panel);
-    addAdminPanelStyles();
-}
-
-function loadReports() {
-    database.ref('reports').orderByChild('status').equalTo('pending').on('value', (snapshot) => {
-        const reports = snapshot.val() || {};
-        const reportsList = document.getElementById('reports-list');
-        if (!reportsList) return;
-        
-        reportsList.innerHTML = "";
-        
-        if (Object.keys(reports).length === 0) {
-            reportsList.innerHTML = '<p class="no-reports">لا توجد بلاغات جديدة</p>';
-            return;
-        }
-
-        Object.entries(reports).forEach(([reportId, report]) => {
-            const reportItem = createReportItem(reportId, report);
-            reportsList.appendChild(reportItem);
-        });
-    });
-}
-
-function createReportItem(reportId, report) {
-    const item = document.createElement('div');
-    item.className = 'report-item';
-    item.innerHTML = `
-        <div class="report-header">
-            <span class="report-id">#${reportId.substr(-6)}</span>
-            <span class="report-date">${formatDate(report.date)}</span>
-        </div>
-        <div class="report-details">
-            <p><strong>المنتج:</strong> ${report.productId}</p>
-            <p><strong>السبب:</strong> ${getReasonText(report.reason)}</p>
-        </div>
-        <div class="report-actions">
-            <button onclick="handleReport('${reportId}', 'delete', '${report.productId}', '${report.ratingId}')" class="delete-btn">
-                حذف التعليق
-            </button>
-            <button onclick="handleReport('${reportId}', 'ignore')" class="ignore-btn">
-                تجاهل البلاغ
-            </button>
-        </div>
-    `;
-    return item;
-}
-
-function handleReport(reportId, action, productId, ratingId) {
-    const updates = {
-        status: 'resolved',
-        action: action,
-        resolvedAt: new Date().toISOString()
-    };
-    
-    if (action === 'delete' && productId && ratingId) {
-        database.ref(`ratings/${productId}/${ratingId}/status`).set('removed')
-            .then(() => {
-                showAlert('تم حذف التعليق بنجاح', 'success');
-            });
-    }
-    
-    database.ref(`reports/${reportId}`).update(updates)
-        .then(() => {
-            loadReports();
-        });
-}
-
-function closeAdminPanel() {
-    const panel = document.getElementById('admin-panel');
-    if (panel) {
-        panel.remove();
-    }
+function sanitizeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // ============== الأنماط ============== //
@@ -722,6 +694,16 @@ function addStyles() {
         .rating-stars {
             color: #ffc107;
             font-size: 18px;
+        }
+        
+        .rating-comment {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        .rating-date {
+            color: #757575;
+            font-size: 12px;
         }
         
         .vote-actions {
@@ -762,18 +744,6 @@ function addStyles() {
             font-size: 14px;
         }
         
-        #admin-panel {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 350px;
-            max-height: 80vh;
-            background: #fff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            z-index: 1000;
-            border-radius: 8px;
-        }
-        
         .alert {
             position: fixed;
             bottom: 20px;
@@ -782,6 +752,7 @@ function addStyles() {
             border-radius: 4px;
             color: white;
             z-index: 1001;
+            animation: slideIn 0.3s ease-out;
         }
         
         .alert-success {
@@ -791,36 +762,22 @@ function addStyles() {
         .alert-error {
             background: #f44336;
         }
-    `;
-    document.head.appendChild(style);
-}
-
-function addAdminPanelStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        #admin-panel {
-            font-family: Arial, sans-serif;
+        
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         
-        .admin-panel-header {
-            background: #1976d2;
-            color: white;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
         }
         
-        .reports-list {
-            max-height: 60vh;
-            overflow-y: auto;
+        .error {
+            color: #f44336;
             padding: 10px;
-        }
-        
-        .report-item {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
+            text-align: center;
         }
     `;
     document.head.appendChild(style);
