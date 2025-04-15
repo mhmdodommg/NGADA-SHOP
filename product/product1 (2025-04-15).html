@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض المنتج</title>
+    <link rel="stylesheet" href="css/product.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Beiruti:wght@200..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- تحميل Firebase بشكل متأخر -->
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+</head>
+<body>
+    
+    <div class="navbar">
+        <div class="menu">
+            <a href="http://localhost:8080/ngada%20shop/index.html"><i class="fas fa-home"></i> الرئيسية</a>
+            <a href=""><i class="fas fa-user"></i> حسابي</a>
+            <a href=""><i class="fas fa-info-circle"></i> عنا</a>
+            <a href=""><i class="fas fa-envelope"></i> تواصل</a>
+        </div>
+    </div>   
+    
+    <!-- 🛒 سلة المشتريات -->
+    <div id="cart-popup" class="cart-popup hidden">  
+        <p id="empty-cart-message" style="color: red; font-weight: bold; display: none;"></p>  
+        <h2>🛍️ سلة المشتريات</h2>  
+        <ul id="cart-items"></ul>  
+        <button onclick="confirmClearCart()">إفراغ السلة</button>  
+        <button onclick="toggleCartPopup()">إغلاق</button>          
+        <p><strong>الإجمالي:</strong> <span id="total-price">0</span> جنيه</p>  
+        <button onclick="checkout()">إتمام الطلب</button>  
+    </div>  
+
+    <!-- ✅ نافذة إدخال بيانات العميل -->
+    <div id="checkout-form" class="hidden checkout-form">  
+        <h3>إدخال بيانات الطلب</h3>  
+        <input type="text" id="customer-name" placeholder="الاسم الكامل" required>  
+        <input type="tel" id="customer-phone" placeholder="رقم الهاتف" required pattern="[0-9]{10,15}">  
+        <input type="tel" id="customer-whatsapp" placeholder="رقم الواتساب" required pattern="[0-9]{10,15}">  
+        <textarea id="customer-address" placeholder="العنوان بالتفصيل" required rows="3"></textarea>  
+
+        <!-- 🏦 اختيار طريقة الدفع -->
+        <h4>اختر طريقة الدفع:</h4>
+        <select id="payment-method" onchange="togglePaymentInfo()">
+            <option value="cash">الدفع عند الاستلام</option>
+            <option value="fawry">فوري</option>
+        </select>  
+
+        <!-- 💳 بيانات الدفع عبر فوري -->
+        <div id="fawry-info" class="hidden">
+            <h4>تفاصيل الدفع عبر فوري:</h4>
+            <p><strong>🔹 رقم الحساب:</strong> 123456789</p>
+            <p><strong>🔹 اسم المستفيد:</strong> مكتبة السودان</p>
+            <p><strong>🔹 بعد الدفع، أرسل إيصال التحويل إلى واتساب: <span style="color: #004d01;">0100000000</span></p>
+        </div>
+        <!-- الموافقة على الشروط والأحكام -->
+        <div class="terms-agreement">
+            <label for="terms-checkbox">
+                <input type="checkbox" id="terms-checkbox" required> 
+                لقد قرأت ووافقت على  
+                <span onclick="openTermsPopup()" style="color: blue; cursor: pointer; text-decoration: underline;">
+                    الشروط والأحكام
+                </span>
+            </label>
+        </div>
+
+        <!-- أزرار الإرسال والإغلاق -->
+        <div class="checkout-buttons">
+            <button onclick="submitOrder()" class="sub-btn">إرسال الطلب</button>  
+            <button onclick="closeCheckout()" class="cancel-btn">إغلاق</button>  
+        </div>
+    </div>
+    
+    <!-- نافذة الشروط والأحكام -->
+    <div id="terms-popup" class="hidden terms-popup">
+        <div class="terms-content">
+            <h3>الشروط والأحكام</h3>
+            <p>سياسة الطلبات والدفع
+يتم تأكيد الطلب بعد استكمال عملية الدفع بالكامل.
+الدفع متاح عبر (الكاش، فوري، فودافون كاش ).
+
+في حال وجود خطأ في الطلب، يجب التواصل معنا خلال 24 ساعة من إتمام العملية.
+
+---
+3. سياسة الشحن والتوصيل
+
+يتم توصيل الطلبات داخل نقادة والمناطق المجاورة خلال (عدد الأيام المتوقع).
+
+تكلفة الشحن يتم تحديدها بناءً على المنطقة وطريقة التوصيل.
+
+المتجر غير مسؤول عن أي تأخير ناتج عن شركات الشحن أو الظروف الطارئة.
+
+---
+4. سياسة الاستبدال والاسترجاع
+
+لا يُسمح باسترجاع المنتجات إلا في حالة وجود عيب مصنعي أو خطأ في الطلب.
+
+يجب الإبلاغ عن المشكلة خلال (عدد الأيام، مثل 48 ساعة) من استلام الطلب.
+
+لا يُقبل استرجاع المنتجات التي تم استخدامها أو فتحها، باستثناء العيوب المصنعية.
+
+يتحمل العميل تكاليف الشحن عند الاستبدال أو الاسترجاع، ما لم يكن الخطأ من المتجر.
+
+---
+5. سياسة الخصوصية وحماية البيانات
+
+نلتزم بحماية بيانات العملاء وعدم مشاركتها مع أي طرف ثالث دون إذن مسبق.
+
+يتم استخدام المعلومات الشخصية فقط لمعالجة الطلبات والتواصل مع العملاء.
+
+---
+6. حقوق المتجر
+
+يحتفظ المتجر بالحق في تعديل الأسعار أو السياسات دون إشعار مسبق.
+
+يحق للمتجر رفض أو إلغاء أي طلب في حال الاشتباه في احتيال أو سوء استخدام للخدمة.
+
+يمنع استخدام أي محتوى من المتجر (صور، نصوص، تصاميم) دون إذن مسبق.
+---
+7. التواصل والدعم
+يمكن التواصل معنا عبر (اذكر طرق التواصل مثل واتساب، فيسبوك، رقم الهاتف).
+ساعات العمل الرسمية: (حدد الأوقات والأيام التي يتم فيها الرد على العملاء).
+---
+
+تنبيه هام للعملاء بشأن التلاعب بالطلبات
+
+نحرص في متجر مدينة نقادة على تقديم أفضل خدمة ممكنة لعملائنا، ونعمل بجد لضمان وصول الطلبات بسرعة ودقة. وننوه انه في حال حصول اي شئ من الاتي:
+
+تقديم طلبات وهمية وعدم استلامها.
+
+إلغاء الطلبات المتكرر بدون سبب مقنع.
+
+محاولة استغلال سياسات الاستبدال والاسترجاع بطرق غير مشروعة.
+ فإننا سنتخذ الإجراءات المناسبة، والتي قد تشمل:
+ 
+حظر العميل من الطلب مستقبلاً.
+
+رفض تنفيذ الطلبات المشبوهة.
+
+الإبلاغ عن أي محاولات احتيالية.
+
+نحن نثق بعملائنا الكرام ونقدّر تعاملهم الجاد معنا، لذا نأمل الالتزام بالشفافية والمصداقية لضمان استمرارية الخدمة بأفضل شكل ممكن.
+شكراً لتفهمكم وتعاونكم .</p>
+            <button onclick="closeTermsPopup()">إغلاق</button>
+        </div>
+    </div>
+    
+    <!-- زر سلة المشتريات -->    
+    <button class="cart-btn" onclick="toggleCartPopup()">  
+        🛒 <span id="cart-count">0</span>  
+    </button>   
+    
+    <!-- محتوى المنتج -->
+    <div class="product-container">
+        <a href="javascript:history.back()" class="back-button">《<br>عودة</a>
+        <img src="img/product1.jpg" alt="صورة المنتج" class="product-img">
+        <div class="product-info">
+            <h2>شبشب بيتي</h2>
+            <p class="price">السعر: 100 جنيه</p>
+            <p class="description">شبشب بيتي جميل وانيق بخامات ممتازة ومتينة بالوان جميلة ورائعة تدوم طويلا </p>
+            <p>:الكمية</p>
+            <div class="quantity-selector" data-price="100">
+                <button class="minus">-</button>
+                <input type="text" id="quantity" value="1" readonly>
+                <button class="plus">+</button>   
+            </div>       
+            <p class="total-price">الإجمالي: <span id="total">100</span> جنيه</p>
+            <button class="buy-btn" data-name="شبشب بيتي" data-price="100" onclick="addToCartAndShow(this)">إضافة إلى السلة</button>       
+        </div>               
+        
+        <!-- تقييمات المنتج -->
+        <div class="product-ratings" id="product1">
+            <h1>قيم المنتج</h1>
+            <div class="stars" id="stars-product1">
+                <span class="star" data-rating="1">&#9733;</span>
+                <span class="star" data-rating="2">&#9733;</span>
+                <span class="star" data-rating="3">&#9733;</span>
+                <span class="star" data-rating="4">&#9733;</span>
+                <span class="star" data-rating="5">&#9733;</span>
+            </div>
+            <input type="text" class="re-com" id="username-product1" placeholder="اسمك">
+            <textarea id="comment-product1" class="re-com" placeholder="أضف تعليقك هنا..."></textarea>
+            <button onclick="submitRating('product1')" class="ret-bt">إرسال التقييم</button>
+            
+            <div id="error-message-product1" class="error-message" style="display:none;">
+                الرجاء إدخال اسم وتقييم وتعليق
+            </div>
+            
+            <div id="success-message-product1" class="success-message" style="display:none;">
+                تم حفظ التقييم بنجاح!
+            </div>
+            
+            <h2>التقييمات السابقة</h2>
+            <div id="ratings-list-product1" class="ratings-list"></div>
+        </div>
+    </div>
+
+    <!-- طبقة التعتيم -->
+    <div id="overlay" class="overlay hidden"></div>
+
+    <script>
+    // تهيئة Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyADxRfJY9-W1TZE-zWXc1zFeiHpidsXbug",
+        authDomain: "coment-a7ac2.firebaseapp.com",
+        databaseURL: "https://coment-a7ac2-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "coment-a7ac2",
+        storageBucket: "coment-a7ac2.appspot.com",
+        messagingSenderId: "1088742650545",
+        appId: "1:1088742650545:web:c66518ea620db96b46e890"
+    };
+
+    // متغيرات النظام
+    let database;
+    let auth;
+    let currentRating = 0;
+    const ADMIN_PASSWORD = "admin123"; // يجب نقل هذا للخلفية لأسباب أمنية
+    let isVoting = false;
+
+    // عند تحميل الصفحة
+    window.onload = async function() {
+        // تهيئة كمية المنتج
+        initQuantitySelector();
+        
+        // تهيئة Firebase
+        await initFirebase();
+        
+        // تهيئة نظام التقييمات
+        initStars('product1');
+        loadRatings('product1');
+        
+        // التحقق من صلاحيات المدير
+        checkAdminAccess();
+        
+        // تحميل السلة من localStorage إذا وجدت
+        loadCart();
+    };
+
+    // ============== نظام كمية المنتج ============== //
+    function initQuantitySelector() {
+        const minusBtn = document.querySelector('.quantity-selector .minus');
+        const plusBtn = document.querySelector('.quantity-selector .plus');
+        const quantityInput = document.querySelector('.quantity-selector #quantity');
+        const price = document.querySelector('.quantity-selector').dataset.price;
+        const totalElement = document.getElementById('total');
+        
+        minusBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+                updateTotalPrice();
+            }
+        });
+        
+        plusBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value);
+            quantityInput.value = currentValue + 1;
+            updateTotalPrice();
+        });
+        
+        function updateTotalPrice() {
+            const quantity = parseInt(quantityInput.value);
+            const total = quantity * parseInt(price);
+            totalElement.textContent = total;
+        }
+    }
+
+    // ============== نظام Firebase ============== //
+    async function initFirebase() {
+        try {
+            // التحقق من وجود Firebase في الصفحة
+            if (typeof firebase === 'undefined') {
+                throw new Error("Firebase لم يتم تحميله بشكل صحيح");
+            }
+            
+            const app = firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            auth = firebase.auth();
+            console.log("Firebase initialized successfully");
+            
+            // تسجيل الدخول المجهول التلقائي
+            await auth.signInAnonymously();
+            console.log("تم التسجيل المجهول بنجاح");
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            showAlert('حدث خطأ في الاتصال بالنظام، يرجى إعادة تحميل الصفحة', 'error');
+        }
+    }
+
+    // ============== نظام النجوم ============== //
+    function initStars(productId) {
+        const stars = document.querySelectorAll(`#stars-${productId} .star`);
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                currentRating = parseInt(this.getAttribute('data-rating'));
+                updateStars(productId, currentRating);
+            });
+        });
+    }
+
+    function updateStars(productId, rating) {
+        const stars = document.querySelectorAll(`#stars-${productId} .star`);
+        stars.forEach((star, index) => {
+            star.style.color = index < rating ? '#ffc107' : '#ccc';
+        });
+    }
+
+    // ============== نظام التقييمات ============== //
+    async function loadRatings(productId) {
+        const ratingsList = document.getElementById(`ratings-list-${productId}`);
+        if (!ratingsList) return;
+
+        ratingsList.innerHTML = '<div class="loading-riating">جاري تحميل التقييمات...</div>';
+
+        try {
+            const snapshot = await database.ref(`ratings/${productId}`).orderByChild('date').once('value');
+            const ratings = snapshot.val() || {};
+            
+            ratingsList.innerHTML = "";
+            
+            if (Object.keys(ratings).length === 0) {
+                ratingsList.innerHTML = '<div class="no-ratings">لا توجد تقييمات بعد. كن أول من يقيم!</div>';
+                return;
+            }
+
+            let totalRating = 0;
+            let count = 0;
+
+            for (const [ratingId, rating] of Object.entries(ratings)) {
+                if (rating.status === 'active') {
+                    totalRating += rating.rating;
+                    count++;
+                    
+                    const ratingItem = createRatingItem(productId, ratingId, rating);
+                    ratingsList.appendChild(ratingItem);
+                    
+                    await loadVotesForRating(productId, ratingId);
+                }
+            }
+
+            updateAverageRating(productId, totalRating, count);
+        } catch (error) {
+            console.error("Error loading ratings:", error);
+            ratingsList.innerHTML = `
+                <div class="error-msg">
+                    حدث خطأ في تحميل التقييمات
+                    <button onclick="loadRatings('${productId}')">إعادة المحاولة</button>
+                </div>
+            `;
+        }
+    }
+
+    async function loadVotesForRating(productId, ratingId) {
+        try {
+            const snapshot = await database.ref(`votes/${productId}/${ratingId}`).once('value');
+            const votes = snapshot.val() || {};
+            
+            let helpful = 0, notHelpful = 0;
+            Object.values(votes).forEach(vote => {
+                vote.vote ? helpful++ : notHelpful++;
+            });
+            
+            updateVoteUI(productId, ratingId, helpful, notHelpful);
+        } catch (error) {
+            console.error("Error loading votes:", error);
+        }
+    }
+
+    function createRatingItem(productId, ratingId, rating) {
+        const ratingItem = document.createElement('div');
+        ratingItem.className = 'rating-item';
+        ratingItem.id = `rating-${ratingId}`;
+        ratingItem.innerHTML = `
+            <div class="rating-header">
+                <strong class="rating-username">${sanitizeHtml(rating.username)}</strong>
+                <div class="rating-stars">${generateStars(rating.rating)}</div>
+            </div>
+            <p class="rating-comment">${sanitizeHtml(rating.comment)}</p>
+            <small class="rating-date">${formatDate(rating.date)}</small>
+            
+            <div class="vote-actions">
+                <button onclick="voteHelpful(true, '${ratingId}', '${productId}')" 
+                        class="helpful-btn" id="helpful-btn-${productId}-${ratingId}">
+                    👍 مفيد (<span id="helpful-count-${productId}-${ratingId}">0</span>)
+                </button>
+                <button onclick="voteHelpful(false, '${ratingId}', '${productId}')" 
+                        class="not-helpful-btn" id="not-helpful-btn-${productId}-${ratingId}">
+                    👎 غير مفيد (<span id="not-helpful-count-${productId}-${ratingId}">0</span>)
+                </button>        
+            </div>
+            <div class="report-section">
+                <select id="report-reason-${ratingId}" class="report-reason">
+                    <option value="spam">محتوى مزعج</option>
+                    <option value="abuse">إساءة</option>
+                    <option value="wrong">معلومات خاطئة</option>
+                </select>
+                <button class="report-btn" onclick="reportRating('${productId}', '${ratingId}')">
+                    إبلاغ
+                </button>
+            </div>
+        `;
+        return ratingItem;
+    }
+
+    async function submitRating(productId) {
+    const submitBtn = document.querySelector(`button[onclick="submitRating('${productId}')"]`);
+    if (!submitBtn) {
+        console.error('Submit button not found');
+        return;
+    }
+
+    const originalText = submitBtn.textContent;
+    const errorEl = document.getElementById(`error-message-${productId}`);
+    const usernameEl = document.getElementById(`username-${productId}`);
+    const commentEl = document.getElementById(`comment-${productId}`);
+
+    try {
+        // التحقق من وجود العناصر الأساسية
+        if (!errorEl || !usernameEl || !commentEl) {
+            const missingElements = [];
+            if (!errorEl) missingElements.push(`error-message-${productId}`);
+            if (!usernameEl) missingElements.push(`username-${productId}`);
+            if (!commentEl) missingElements.push(`comment-${productId}`);
+            console.error('Missing elements:', missingElements.join(', '));
+            return;
+        }
+
+        submitBtn.textContent = 'جاري التحضير...';
+        submitBtn.disabled = true;
+
+        // إخفاء أي رسائل خطأ سابقة
+        hideErrorMessages(productId);
+
+        // إزالة حالة الخطأ من جميع الحقول
+        resetInvalidFields(productId);
+
+        // التحقق من صحة البيانات
+        const username = usernameEl.value.trim();
+        const comment = commentEl.value.trim();
+
+        if (!username || username.length < 3) {
+            showErrorMessage(productId, "name", "الاسم يجب أن يكون 3 أحرف على الأقل");
+            usernameEl.classList.add('invalid');
+            usernameEl.focus(); // إعطاء التركيز للحقل غير الصالح
+            throw new Error("الاسم يجب أن يكون 3 أحرف على الأقل");
+        }
+
+        if (!comment || comment.length < 10) {
+            showErrorMessage(productId, "comment", "التعليق يجب أن يكون 10 أحرف على الأقل");
+            commentEl.classList.add('invalid');
+            commentEl.focus();
+            throw new Error("التعليق يجب أن يكون 10 أحرف على الأقل");
+        }
+
+        if (currentRating < 1 || currentRating > 5) {
+            showErrorMessage(productId, "rating", "التقييم يجب أن يكون بين 1 و 5 نجوم");
+            throw new Error("التقييم يجب أن يكون بين 1 و 5 نجوم");
+        }
+
+        // إذا وصلنا إلى هنا، كل البيانات صالحة
+        // ... الكود الخاص بحفظ التقييم في Firebase ...
+
+        // إظهار رسالة نجاح
+        const successEl = document.getElementById(`success-message-${productId}`);
+        if (successEl) {
+            successEl.textContent = "تم إرسال التقييم بنجاح!";
+            successEl.style.display = 'block';
+            
+            // إخفاء رسالة النجاح بعد 5 ثواني
+            setTimeout(() => {
+                successEl.style.display = 'none';
+            }, 5000);
+        }
+
+        // إعادة تعيين النموذج
+        usernameEl.value = "";
+        commentEl.value = "";
+        currentRating = 0;
+        updateStars(productId, 0);
+
+    } catch (error) {
+        console.error("Error details:", error);
+        // لا داعي لـ showAlert هنا لأننا نعرض الرسائل المخصصة
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
+// الدوال المساعدة:
+
+function hideErrorMessages(productId) {
+    const errorEl = document.getElementById(`error-message-${productId}`);
+    if (errorEl) {
+        errorEl.style.display = 'none';
+    }
+}
+
+function resetInvalidFields(productId) {
+    const usernameEl = document.getElementById(`username-${productId}`);
+    const commentEl = document.getElementById(`comment-${productId}`);
+    
+    usernameEl?.classList.remove('invalid');
+    commentEl?.classList.remove('invalid');
+}
+
+function showErrorMessage(productId, errorType, message) {
+    const errorEl = document.getElementById(`error-message-${productId}`);
+    if (!errorEl) return;
+
+    errorEl.textContent = message;
+    errorEl.className = `error-message ${errorType}-error`;
+    errorEl.style.display = 'block';
+    
+    // إخفاء الرسالة بعد 5 ثواني
+    setTimeout(() => {
+        errorEl.classList.add('fade-out');
+        setTimeout(() => {
+            errorEl.style.display = 'none';
+            errorEl.classList.remove('fade-out');
+        }, 500);
+    }, 5000);
+}
+
+    // ============== نظام التصويت ============== //
+   async function voteHelpful(isHelpful, ratingId, productId) {
+    if (isVoting) return;
+    isVoting = true;
+
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            showAlert('يجب تسجيل الدخول أولاً', 'error');
+            return;
+        }
+
+        const helpfulBtn = document.getElementById(`helpful-btn-${productId}-${ratingId}`);
+        const notHelpfulBtn = document.getElementById(`not-helpful-btn-${productId}-${ratingId}`);
+        
+        // إظهار حالة التحميل
+        helpfulBtn.disabled = true;
+        notHelpfulBtn.disabled = true;
+        
+        const voteRef = database.ref(`votes/${productId}/${ratingId}/${user.uid}`);
+        const snapshot = await voteRef.once('value');
+        const previousVote = snapshot.exists() ? snapshot.val().vote : null;
+        
+        // إذا كان التصويت الحالي مثل السابق (إلغاء التصويت)
+        if (previousVote === isHelpful) {
+            await voteRef.remove();
+            
+            // إزالة الحالة النشطة من الأزرار
+            helpfulBtn.classList.remove('active');
+            notHelpfulBtn.classList.remove('active');
+            
+            // تحديث العداد
+            updateVoteCount(productId, ratingId, isHelpful ? -1 : 0, isHelpful ? 0 : -1);
+        } 
+        // إذا كان هناك تصويت مختلف (تغيير التصويت)
+        else if (previousVote !== null) {
+            await voteRef.set({
+                vote: isHelpful,
+                timestamp: Date.now(),
+                userId: user.uid
+            });
+            
+            // تحديث الحالة النشطة
+            if (isHelpful) {
+                helpfulBtn.classList.add('active');
+                notHelpfulBtn.classList.remove('active');
+            } else {
+                helpfulBtn.classList.remove('active');
+                notHelpfulBtn.classList.add('active');
+            }
+            
+            // تحديث العداد
+            updateVoteCount(productId, ratingId, isHelpful ? 1 : -1, isHelpful ? -1 : 1);
+        }
+        // إذا كان التصويت جديد
+        else {
+            await voteRef.set({
+                vote: isHelpful,
+                timestamp: Date.now(),
+                userId: user.uid
+            });
+            
+            // تعيين الحالة النشطة
+            if (isHelpful) {
+                helpfulBtn.classList.add('active');
+            } else {
+                notHelpfulBtn.classList.add('active');
+            }
+            
+            // تحديث العداد
+            updateVoteCount(productId, ratingId, isHelpful ? 1 : 0, isHelpful ? 0 : 1);
+        }
+        
+    } catch (error) {
+        console.error("Error in voting:", error);
+        showAlert(`حدث خطأ: ${error.message}`, 'error');
+    } finally {
+        isVoting = false;
+        const helpfulBtn = document.getElementById(`helpful-btn-${productId}-${ratingId}`);
+        const notHelpfulBtn = document.getElementById(`not-helpful-btn-${productId}-${ratingId}`);
+        if (helpfulBtn) helpfulBtn.disabled = false;
+        if (notHelpfulBtn) notHelpfulBtn.disabled = false;
+    }
+}
+
+// دالة مساعدة لتحديث العداد
+function updateVoteCount(productId, ratingId, deltaHelpful, deltaNotHelpful) {
+    const helpfulElement = document.getElementById(`helpful-count-${productId}-${ratingId}`);
+    const notHelpfulElement = document.getElementById(`not-helpful-count-${productId}-${ratingId}`);
+
+    if (helpfulElement) {
+        const current = parseInt(helpfulElement.textContent) || 0;
+        helpfulElement.textContent = Math.max(0, current + deltaHelpful);
+    }
+
+    if (notHelpfulElement) {
+        const current = parseInt(notHelpfulElement.textContent) || 0;
+        notHelpfulElement.textContent = Math.max(0, current + deltaNotHelpful);
+    }
+}    
+    function updateVoteUI(productId, ratingId, helpful, notHelpful) {
+        const helpfulElement = document.getElementById(`helpful-count-${productId}-${ratingId}`);
+        const notHelpfulElement = document.getElementById(`not-helpful-count-${productId}-${ratingId}`);
+
+        if (helpfulElement) {
+            helpfulElement.textContent = helpful;
+        }
+
+        if (notHelpfulElement) {
+            notHelpfulElement.textContent = notHelpful;
+        }
+    }
+
+    function updateCountersUI(productId, ratingId, deltaHelpful, deltaNotHelpful, currentVote) {
+        const helpfulElement = document.getElementById(`helpful-count-${productId}-${ratingId}`);
+        const notHelpfulElement = document.getElementById(`not-helpful-count-${productId}-${ratingId}`);
+
+        // تحديث التعداد مباشرة
+        if (helpfulElement) {
+            const currentHelpful = parseInt(helpfulElement.textContent) || 0;
+            helpfulElement.textContent = currentHelpful + deltaHelpful;
+        }
+
+        if (notHelpfulElement) {
+            const currentNotHelpful = parseInt(notHelpfulElement.textContent) || 0;
+            notHelpfulElement.textContent = currentNotHelpful + deltaNotHelpful;
+        }
+
+        // تحديث حالة الأزرار بناءً على التصويت
+        updateButtonStates(productId, ratingId, currentVote);
+    }
+
+    function updateButtonStates(productId, ratingId, currentVote) {
+        const helpfulBtn = document.getElementById(`helpful-btn-${productId}-${ratingId}`);
+        const notHelpfulBtn = document.getElementById(`not-helpful-btn-${productId}-${ratingId}`);
+
+        if (helpfulBtn) helpfulBtn.classList.remove('active');
+        if (notHelpfulBtn) notHelpfulBtn.classList.remove('active');
+
+        if (currentVote === true && helpfulBtn) {
+            helpfulBtn.classList.add('active');
+        } else if (currentVote === false && notHelpfulBtn) {
+            notHelpfulBtn.classList.add('active');
+        }
+    }
+
+    function showLoading(show, productId, ratingId) {
+        const loader = document.getElementById(`vote-loader-${productId}-${ratingId}`);
+        if (loader) {
+            loader.style.display = show ? 'block' : 'none';
+        }
+    }
+
+    // ============== نظام الإبلاغ ============== //
+    async function reportRating(productId, ratingId) {
+        try {
+            const user = auth.currentUser;
+            if (!user) throw new Error("يجب تسجيل الدخول أولاً");
+
+            const reasonSelect = document.getElementById(`report-reason-${ratingId}`);
+            const reason = reasonSelect ? reasonSelect.value : "other";
+            const reasonText = getReasonText(reason);
+            
+            if (!confirm(`هل أنت متأكد من الإبلاغ عن هذا التعليق؟\nالسبب: ${reasonText}`)) {
+                return;
+            }
+
+            const reportData = {
+                productId: productId,
+                ratingId: ratingId,
+                reason: reason,
+                date: new Date().toISOString(),
+                status: "pending",
+                reportedBy: user.uid
+            };
+
+            await database.ref(`reports/${Date.now()}`).set(reportData);
+            
+            markAsReported(ratingId);
+            showAlert('تم تسجيل بلاغك بنجاح وسيتم مراجعته', 'success');
+            
+        } catch (error) {
+            console.error("Error saving report:", error);
+            showAlert(`حدث خطأ: ${error.message}`, 'error');
+        }
+    }
+
+    // ============== لوحة التحكم ============== //
+    function checkAdminAccess() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const adminKey = urlParams.get('admin');
+        
+        if (adminKey === ADMIN_PASSWORD) {
+            showAdminPanel();
+            loadReports();
+        }
+    }
+
+    async function loadReports() {
+        try {
+            const reportsList = document.getElementById('reports-list');
+            if (!reportsList) return;
+            
+            reportsList.innerHTML = '<div class="loading">جاري تحميل البلاغات...</div>';
+
+            const snapshot = await database.ref('reports').orderByChild('status').equalTo('pending').once('value');
+            const reports = snapshot.val() || {};
+            
+            reportsList.innerHTML = "";
+            
+            if (Object.keys(reports).length === 0) {
+                reportsList.innerHTML = '<p class="no-reports">لا توجد بلاغات جديدة</p>';
+                return;
+            }
+
+            for (const [reportId, report] of Object.entries(reports)) {
+                const reportItem = createReportItem(reportId, report);
+                reportsList.appendChild(reportItem);
+            }
+        } catch (error) {
+            console.error("Error loading reports:", error);
+            const reportsList = document.getElementById('reports-list');
+            if (reportsList) {
+                reportsList.innerHTML = '<div class="error">حدث خطأ في تحميل البلاغات</div>';
+            }
+        }
+    }
+
+    // ============== نظام السلة ============== //
+    let cart = [];
+
+    function loadCart() {
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+            cart = JSON.parse(savedCart);
+            updateCartUI();
+        }
+    }
+
+    function saveCart() {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        const cartItemsList = document.getElementById('cart-items');
+        const cartCountElement = document.getElementById('cart-count');
+        const totalPriceElement = document.getElementById('total-price');
+        
+        cartItemsList.innerHTML = '';
+        
+        if (cart.length === 0) {
+            document.getElementById('empty-cart-message').style.display = 'block';
+            document.getElementById('empty-cart-message').textContent = 'السلة فارغة';
+        } else {
+            document.getElementById('empty-cart-message').style.display = 'none';
+            
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${item.name} - ${item.quantity} × ${item.price} جنيه 
+                    <button onclick="removeFromCart(${index})" class="remove-item">×</button>
+                `;
+                cartItemsList.appendChild(li);
+                total += item.price * item.quantity;
+            });
+            
+            totalPriceElement.textContent = total;
+        }
+        
+        cartCountElement.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+    }
+
+    function addToCartAndShow(button) {
+        addToCart(button);
+        toggleCartPopup();
+    }
+
+    function addToCart(button) {
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const name = button.dataset.name;
+        const price = parseInt(button.dataset.price);
+        
+        // التحقق من وجود المنتج في السلة
+        const existingItemIndex = cart.findIndex(item => item.name === name);
+        
+        if (existingItemIndex >= 0) {
+            // تحديث الكمية إذا كان المنتج موجوداً
+            cart[existingItemIndex].quantity += quantity;
+        } else {
+            // إضافة منتج جديد
+            cart.push({
+                name: name,
+                price: price,
+                quantity: quantity
+            });
+        }
+        
+        saveCart();
+        showAlert('تمت إضافة المنتج إلى السلة', 'success');
+    }
+
+    function removeFromCart(index) {
+        if (index >= 0 && index < cart.length) {
+            cart.splice(index, 1);
+            saveCart();
+        }
+    }
+
+    function confirmClearCart() {
+        if (cart.length === 0) return;
+        
+        if (confirm('هل أنت متأكد أنك تريد إفراغ السلة؟')) {
+            clearCart();
+        }
+    }
+
+    function clearCart() {
+        cart = [];
+        saveCart();
+        showAlert('تم إفراغ السلة', 'success');
+    }
+
+    function toggleCartPopup() {
+        const cartPopup = document.getElementById('cart-popup');
+        const overlay = document.getElementById('overlay');
+        
+        if (cartPopup.classList.contains('hidden')) {
+            cartPopup.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+        } else {
+            cartPopup.classList.add('hidden');
+            overlay.classList.add('hidden');
+        }
+    }
+
+    // ============== نظام الطلبات ============== //
+    function checkout() {
+        if (cart.length === 0) {
+            showAlert('السلة فارغة، أضف منتجات أولاً', 'error');
+            return;
+        }
+        
+        const checkoutForm = document.getElementById('checkout-form');
+        const cartPopup = document.getElementById('cart-popup');
+        
+        cartPopup.classList.add('hidden');
+        checkoutForm.classList.remove('hidden');
+    }
+
+    function closeCheckout() {
+        document.getElementById('checkout-form').classList.add('hidden');
+        document.getElementById('overlay').classList.add('hidden');
+    }
+
+    function togglePaymentInfo() {
+        const paymentMethod = document.getElementById('payment-method').value;
+        const fawryInfo = document.getElementById('fawry-info');
+        
+        if (paymentMethod === 'fawry') {
+            fawryInfo.classList.remove('hidden');
+        } else {
+            fawryInfo.classList.add('hidden');
+        }
+    }
+
+    async function submitOrder() {
+        const name = document.getElementById('customer-name').value.trim();
+        const phone = document.getElementById('customer-phone').value.trim();
+        const whatsapp = document.getElementById('customer-whatsapp').value.trim();
+        const address = document.getElementById('customer-address').value.trim();
+        const paymentMethod = document.getElementById('payment-method').value;
+        const termsChecked = document.getElementById('terms-checkbox').checked;
+        
+        // التحقق من صحة البيانات
+        if (!name || !phone || !whatsapp || !address) {
+            showAlert('الرجاء ملء جميع الحقول المطلوبة', 'error');
+            return;
+        }
+        
+        if (!termsChecked) {
+            showAlert('يجب الموافقة على الشروط والأحكام', 'error');
+            return;
+        }
+        
+        // تحضير بيانات الطلب
+        const order = {
+            customer: { name, phone, whatsapp, address },
+            paymentMethod,
+            items: [...cart],
+            total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+            date: new Date().toISOString(),
+            status: 'pending'
+        };
+        
+        try {
+            // حفظ الطلب في قاعدة البيانات
+            const ordersRef = database.ref('orders');
+            await ordersRef.push(order);
+            
+            // إفراغ السلة بعد حفظ الطلب
+            clearCart();
+            closeCheckout();
+            
+            // إعادة تعيين النموذج
+            document.getElementById('checkout-form').reset();
+            document.getElementById('fawry-info').classList.add('hidden');
+            
+            showAlert('تم استلام طلبك بنجاح، سنتواصل معك قريباً', 'success');
+        } catch (error) {
+            console.error('Error submitting order:', error);
+            showAlert('حدث خطأ أثناء حفظ الطلب، يرجى المحاولة مرة أخرى', 'error');
+        }
+    }
+
+    // ============== نظام الشروط والأحكام ============== //
+    function openTermsPopup() {
+        document.getElementById('terms-popup').classList.remove('hidden');
+        document.getElementById('overlay').classList.remove('hidden');
+    }
+
+    function closeTermsPopup() {
+        document.getElementById('terms-popup').classList.add('hidden');
+        document.getElementById('overlay').classList.add('hidden');
+    }
+
+    // ============== وظائف مساعدة ============== //
+    function generateStars(rating) {
+        let stars = "";
+        for (let i = 1; i <= 5; i++) {
+            stars += i <= rating ? '★' : '☆';
+        }
+        return stars;
+    }
+
+    function updateAverageRating(productId, totalRating, count) {
+        const average = count > 0 ? (totalRating / count).toFixed(1) : 0;
+        const averageElement = document.getElementById(`average-rating-${productId}`);
+        if (averageElement) {
+            averageElement.innerHTML = `متوسط التقييم: ${generateStars(Math.round(average))} <span class="average-number">(${average} من 5)</span>`;
+        }
+    }
+
+    function formatDate(dateString) {
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleString('ar-EG');
+        } catch (e) {
+            return dateString;
+        }
+    }
+
+    function getReasonText(reason) {
+        const reasons = {
+            'spam': 'محتوى مزعج',
+            'abuse': 'إساءة',
+            'wrong': 'معلومات خاطئة',
+            'other': 'أسباب أخرى'
+        };
+        return reasons[reason] || reason;
+    }
+
+    function markAsReported(ratingId) {
+        const ratingElement = document.getElementById(`rating-${ratingId}`);
+        if (ratingElement) {
+            ratingElement.classList.add('reported');
+        }
+    }
+
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+
+    function sanitizeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // إغلاق النوافذ عند النقر خارجها
+    document.getElementById('overlay').addEventListener('click', function() {
+        document.getElementById('cart-popup').classList.add('hidden');
+        document.getElementById('checkout-form').classList.add('hidden');
+        document.getElementById('terms-popup').classList.add('hidden');
+        this.classList.add('hidden');
+    });
+    </script>
+</body>
+</html>
