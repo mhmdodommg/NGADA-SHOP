@@ -1,423 +1,878 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر مدينة نقادة</title>
-        <!-- وصف الموقع (يظهر في Google تحت العنوان) -->
-    <meta name="description" content="متجر مدينة نقادة متجر ألكتروني يساعد أهل نقادة على التسوق الإلكتروني من البيت دون تعب او مجهود متجر مدينة نقادة يعد أول متجر إلكتروني في نقادة">
-    
-    <!-- الكلمات المفتاحية -->
-    <meta name="keywords" content="منتجات ,نقادة ,متجر نقادة ,تسوق ,متجر مدينة نقادة">
-    
-    <!-- اسم المؤلف -->
+    <title>متجر مدينة نقادة - التسوق الإلكتروني الأول في نقادة</title>
+    <meta name="description" content="متجر مدينة نقادة - أول متجر إلكتروني في نقادة يقدم كل ما تحتاجه من منتجات منزلية، إلكترونيات، عطور وأكثر مع خدمة التوصيل السريع">
+    <meta name="keywords" content="متجر نقادة, تسوق إلكتروني نقادة, شراء أونلاين نقادة, توصيل نقادة, منتجات نقادة">
     <meta name="author" content="MMG WORKS">
+    <meta name="robots" content="index, follow">
     
-    <!-- تفعيل الفهرسة لمحركات البحث -->
-    <meta name="robots" content="index, follow">     
-   <!-- Open Graph للفيسبوك وواتساب -->
-<!-- Open Graph -->
-<meta property="og:title" content="متجر مدينة نقادة">
-<meta property="og:description" content="متجر مدينة نقادة متجر ألكتروني يساعد أهل نقادة على التسوق الإلكتروني من البيت دون تعب او مجهود متجر مدينة نقادة يعد أول متجر إلكتروني في نقادة">
-<meta property="og:image:width" content="1200">
-     <meta property="og:image:height" content="630">
-     <meta property="og:image:alt" content="متجر مدينة نقادة">
-<meta property="og:image" content="https://i.imgur.com/LsWqEvd.png">
-<meta property="og:url" content="https://ngada-shop.vercel.app">
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="متجر مدينة نقادة">
-<meta name="twitter:description" content="متجر مدينة نقادة متجر ألكتروني يساعد أهل نقادة على التسوق الإلكتروني من البيت دون تعب او مجهود متجر مدينة نقادة يعد أول متجر إلكتروني في نقادة">
-<meta name="twitter:image" content="https://i.imgur.com/LsWqEvd.png">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ngada-shop.vercel.app">
+    <meta property="og:title" content="متجر مدينة نقادة - التسوق الإلكتروني الأول في نقادة">
+    <meta property="og:description" content="متجر مدينة نقادة - أول متجر إلكتروني في نقادة يقدم كل ما تحتاجه من منتجات منزلية، إلكترونيات، عطور وأكثر مع خدمة التوصيل السريع">
+    <meta property="og:image" content="https://i.imgur.com/LsWqEvd.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ngada-shop.vercel.app">
+    <meta property="twitter:title" content="متجر مدينة نقادة - التسوق الإلكتروني الأول في نقادة">
+    <meta property="twitter:description" content="متجر مدينة نقادة - أول متجر إلكتروني في نقادة يقدم كل ما تحتاجه من منتجات منزلية، إلكترونيات، عطور وأكثر مع خدمة التوصيل السريع">
+    <meta property="twitter:image" content="https://i.imgur.com/LsWqEvd.png">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Beiruti:wght@200..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Preload -->
+    <link rel="preload" href="img/logo.png" as="image">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "متجر مدينة نقادة",
+      "description": "أول متجر إلكتروني في نقادة يقدم كل ما تحتاجه من منتجات",
+      "url": "https://ngada-shop.vercel.app",
+      "logo": "https://i.imgur.com/LsWqEvd.png",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "نقادة",
+        "addressRegion": "قنا",
+        "addressCountry": "EG"
+      },
+      "openingHours": "Mo-Su 09:00-23:00",
+      "telephone": "+201092182832",
+      "priceRange": "$$"
+    }
+    </script> 
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>   
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>    
 </head>
 <body>
-    <div class="content">
-        <div class="navbar">
-    <div class="menu">
-        <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
-        <a href="sign.html"><i class="fas fa-user"></i> حسابي</a>
-        <a href="about.html"><i class="fas fa-info-circle"></i> عنا</a>
-        <a href="contact-us.html"><i class="fas fa-envelope"></i> تواصل</a>
-    </div>
-</div>   
- <br><br><br>  
-    <!-- صورة الشعار -->
-    <img src="img/logo.png" alt="شعار المتجر" class="logo"><br>
-    <h1>متجر مدينة نقادة</h1>
-    <p class="subtitle">!كل ما تحتاجه في مكان واحد</p>
- 
-   <div class="search-wrapper">
-    <div class="search-container">
-        <input type="text" placeholder="....ابحث هنا المنتجات" id="search">
-        <button><i class="fas fa-search"></i></button>
-        <div id="search-results" class="search-results" style="display: none;">
-    <h2>النتائج:</h2>
-    <ul id="results-list"></ul>
-</div>
-    </div>
-</div>   
-   <div class="typing-container">
-    <span id="auto-type"></span>
-</div>
-
-<!-- نافذة عندك سؤال -->
-<div class="popup" id="questions-popup">
-    <button class="close-btn" onclick="closePopup('questions-popup')">x</button>
-    <h3>عندك سؤال؟</h3>
-
-    <!-- المشاكل -->
-    <div class="problem" onclick="toggleSolution('solution1')">لا تعرف كيف تشتري من الموقع ؟</div>
-    <div id="solution1" class="solution">للشراء من موقعنا الإلكتروني يمكنك بكل بساطة الضغط على زر إضافة الى السله بتاعت المشتريات وبعدها اذا خلصت شراء المنتجات يمكنك الضغط على أيقونة السلة بتاعت المشتريات وسوف يظهر لك خيار إتمام الطلب وبعدها أكتب كل البيانات المطلوبة والضغط على زر إتمام الطلب وسوف تصلك رسالة على رقمك لتأكيد الطلبية
-    </div>
-
-    <div class="problem" onclick="toggleSolution('solution2')">لا تستطيع إتمام عملية شراء المنتج ؟ </div>
-    <div id="solution2" class="solution">يجب عليك اولآ التأكد من الإنترنت لديك يعمل جيدآ بدون مشاكل والتأكد من أنك أخترت منتجآ قبل الضغط على زر إتمام الطلب لأن الزر لم يعمل حتى يتم إختيار منتج </div>
-
-    <div class="problem" onclick="toggleSolution('solution3')">لديك مشكلة في الموقع ؟</div>
-    <div id="solution3" class="solution"> لا تترد في <a href="contact-us.html" class="a1"> التواصل معنا </a> إذا كنت تواجه اي مشكلة في الموقع او في اي وظيفة داخل الموقع من أزرار الى عرض المنتجات </div>
-</div>
-
-<!-- نافذة القواعد والشروط -->
-<div class="popup" id="rules-popup">
-    <button class="close-btn" onclick="closePopup('rules-popup')">x</button>
-    <h3>القواعد والشروط</h3>
-    <p class="p-terms">قواعد وشروط متجر "مدينة نقادة"
-1. تعريف عام
-متجر "مدينة نقادة" هو منصة إلكترونية لبيع المنتجات المختلفة، بما في ذلك الكتب، الملخصات الدراسية، العطور، والمنتجات الموسمية.
-باستخدامك للمتجر، فإنك توافق على جميع الشروط والأحكام المذكورة أدناه.
-
----
-2. سياسة الطلبات والدفع
-يتم تأكيد الطلب بعد استكمال عملية الدفع بالكامل.
-الدفع متاح عبر (الكاش، فوري، فودافون كاش ).
-
-في حال وجود خطأ في الطلب، يجب التواصل معنا خلال 24 ساعة من إتمام العملية.
-
----
-3. سياسة الشحن والتوصيل
-
-يتم توصيل الطلبات داخل نقادة والمناطق المجاورة خلال (عدد الأيام المتوقع).
-
-تكلفة الشحن يتم تحديدها بناءً على المنطقة وطريقة التوصيل.
-
-المتجر غير مسؤول عن أي تأخير ناتج عن شركات الشحن أو الظروف الطارئة.
-
----
-4. سياسة الاستبدال والاسترجاع
-
-لا يُسمح باسترجاع المنتجات إلا في حالة وجود عيب مصنعي أو خطأ في الطلب.
-
-يجب الإبلاغ عن المشكلة خلال (عدد الأيام، مثل 48 ساعة) من استلام الطلب.
-
-لا يُقبل استرجاع المنتجات التي تم استخدامها أو فتحها، باستثناء العيوب المصنعية.
-
-يتحمل العميل تكاليف الشحن عند الاستبدال أو الاسترجاع، ما لم يكن الخطأ من المتجر.
-
----
-5. سياسة الخصوصية وحماية البيانات
-
-نلتزم بحماية بيانات العملاء وعدم مشاركتها مع أي طرف ثالث دون إذن مسبق.
-
-يتم استخدام المعلومات الشخصية فقط لمعالجة الطلبات والتواصل مع العملاء.
-
----
-6. حقوق المتجر
-
-يحتفظ المتجر بالحق في تعديل الأسعار أو السياسات دون إشعار مسبق.
-
-يحق للمتجر رفض أو إلغاء أي طلب في حال الاشتباه في احتيال أو سوء استخدام للخدمة.
-
-يمنع استخدام أي محتوى من المتجر (صور، نصوص، تصاميم) دون إذن مسبق.
----
-7. التواصل والدعم
-يمكن التواصل معنا عبر (اذكر طرق التواصل مثل واتساب، فيسبوك، رقم الهاتف).
-ساعات العمل الرسمية: (حدد الأوقات والأيام التي يتم فيها الرد على العملاء).
----
-
-تنبيه هام للعملاء بشأن التلاعب بالطلبات
-
-نحرص في متجر مدينة نقادة على تقديم أفضل خدمة ممكنة لعملائنا، ونعمل بجد لضمان وصول الطلبات بسرعة ودقة. وننوه انه في حال حصول اي شئ من الاتي:
-
-تقديم طلبات وهمية وعدم استلامها.
-
-إلغاء الطلبات المتكرر بدون سبب مقنع.
-
-محاولة استغلال سياسات الاستبدال والاسترجاع بطرق غير مشروعة.
- فإننا سنتخذ الإجراءات المناسبة، والتي قد تشمل:
- 
-حظر العميل من الطلب مستقبلاً.
-
-رفض تنفيذ الطلبات المشبوهة.
-
-الإبلاغ عن أي محاولات احتيالية.
-
-نحن نثق بعملائنا الكرام ونقدّر تعاملهم الجاد معنا، لذا نأمل الالتزام بالشفافية والمصداقية لضمان استمرارية الخدمة بأفضل شكل ممكن.
-شكراً لتفهمكم وتعاونكم.
-</p>
-</div>
-
-<!-- نافذة الشكاوى -->
-<div class="popup" id="complaints-popup">
-    <button class="close-btn" onclick="closePopup('complaints-popup')">x</button>
-    <h3>الشكاوى</h3>
-    <p>إذا كان لديك أي شكوى، يمكنك التواصل معنا.</p>
-</div>
-<div class="popup-container">
-    <button class="popup-btn" onclick="openPopup('questions-popup')">
-        <i class="fas fa-question-circle"></i> عندك سؤال؟
-    </button>
-
-    <button class="popup-btn" onclick="openPopup('rules-popup')">
-        <i class="fas fa-balance-scale"></i> القواعد والشروط
-    </button>
-
-    <button class="popup-btn" onclick="openPopup('complaints-popup')">
-        <i class="fas fa-exclamation-triangle"></i> الشكاوى
-    </button>
-</div>
-<br><br>
-<!-- 🛒 سلة المشتريات -->
-<div id="cart-popup" class="cart-popup">  
-    <p id="empty-cart-message" style="color: red; font-weight: bold; display: none;"></p>  
-    <h2>🛍️ سلة المشتريات</h2>  
-    <ul id="cart-items"></ul>  
-    <button onclick="clearCart()">إفراغ السلة</button>  
-    <button onclick="toggleCartPopup()">إغلاق</button>          
-    <p><strong>الإجمالي:</strong> <span id="total-price">0</span> جنيه</p>  
-    <button onclick="checkout()">إتمام الطلب</button>  
-</div>  
-
-<!-- ✅ نافذة إدخال بيانات العميل (خارج السلة) -->
-<div id="checkout-form" class="hidden">  
-    <h3>إدخال بيانات الطلب</h3>  
-    <input type="text" id="customer-name" placeholder="الاسم" required>  
-    <input type="tel" id="customer-phone" placeholder="رقم الهاتف" required>  
-    <input type="tel" id="customer-whatsapp" placeholder="رقم الواتساب" required>  
-    <input type="text" id="customer-address" placeholder="العنوان" required>  
-
-    <!-- 🏦 اختيار طريقة الدفع -->
-    <h4>اختر طريقة الدفع:</h4>
-    <select id="payment-method" onchange="togglePaymentInfo()">
-        <option value="cash">الدفع عند الاستلام</option>
-        <option value="fawry">فوري</option>
-    </select>  
-
-    <!-- 💳 بيانات الدفع عبر فوري -->
-    <div id="fawry-info" class="hidden">
-        <h4>تفاصيل الدفع عبر فوري:</h4>
-        <p><strong>🔹 رقم الحساب:</strong> 123456789</p>
-        <p><strong>🔹 اسم المستفيد:</strong> مكتبة السودان</p>
-        <p><strong>🔹 بعد الدفع، أرسل إيصال التحويل إلى واتساب: <span style="color: #ff5722;">0100000000</span></p>
-    </div>
-<!-- الموافقة على الشروط والأحكام -->
-<label for="terms-checkbox">
-    <input type="checkbox" id="terms-checkbox"> لقد قرأت ووافقت على  
-</label>
-<span onclick="openTermsPopup()" style="color: blue; cursor: pointer; text-decoration: underline;">
-    الشروط والأحكام
-</span>
-
-<!-- نافذة الشروط والأحكام -->
-<div id="terms-popup" class="hidden terms-popup">
-    <div class="terms-content">
-        <h3>الشروط والأحكام</h3>
-        <p>سياسة الطلبات والدفع
-يتم تأكيد الطلب بعد استكمال عملية الدفع بالكامل.
-الدفع متاح عبر (الكاش، فوري، فودافون كاش ).
-
-في حال وجود خطأ في الطلب، يجب التواصل معنا خلال 24 ساعة من إتمام العملية.
-
----
-3. سياسة الشحن والتوصيل
-
-يتم توصيل الطلبات داخل نقادة والمناطق المجاورة خلال (عدد الأيام المتوقع).
-
-تكلفة الشحن يتم تحديدها بناءً على المنطقة وطريقة التوصيل.
-
-المتجر غير مسؤول عن أي تأخير ناتج عن شركات الشحن أو الظروف الطارئة.
-
----
-4. سياسة الاستبدال والاسترجاع
-
-لا يُسمح باسترجاع المنتجات إلا في حالة وجود عيب مصنعي أو خطأ في الطلب.
-
-يجب الإبلاغ عن المشكلة خلال (عدد الأيام، مثل 48 ساعة) من استلام الطلب.
-
-لا يُقبل استرجاع المنتجات التي تم استخدامها أو فتحها، باستثناء العيوب المصنعية.
-
-يتحمل العميل تكاليف الشحن عند الاستبدال أو الاسترجاع، ما لم يكن الخطأ من المتجر.
-
----
-5. سياسة الخصوصية وحماية البيانات
-
-نلتزم بحماية بيانات العملاء وعدم مشاركتها مع أي طرف ثالث دون إذن مسبق.
-
-يتم استخدام المعلومات الشخصية فقط لمعالجة الطلبات والتواصل مع العملاء.
-
----
-6. حقوق المتجر
-
-يحتفظ المتجر بالحق في تعديل الأسعار أو السياسات دون إشعار مسبق.
-
-يحق للمتجر رفض أو إلغاء أي طلب في حال الاشتباه في احتيال أو سوء استخدام للخدمة.
-
-يمنع استخدام أي محتوى من المتجر (صور، نصوص، تصاميم) دون إذن مسبق.
----
-7. التواصل والدعم
-يمكن التواصل معنا عبر (اذكر طرق التواصل مثل واتساب، فيسبوك، رقم الهاتف).
-ساعات العمل الرسمية: (حدد الأوقات والأيام التي يتم فيها الرد على العملاء).
----
-
-تنبيه هام للعملاء بشأن التلاعب بالطلبات
-
-نحرص في متجر مدينة نقادة على تقديم أفضل خدمة ممكنة لعملائنا، ونعمل بجد لضمان وصول الطلبات بسرعة ودقة. وننوه انه في حال حصول اي شئ من الاتي:
-
-تقديم طلبات وهمية وعدم استلامها.
-
-إلغاء الطلبات المتكرر بدون سبب مقنع.
-
-محاولة استغلال سياسات الاستبدال والاسترجاع بطرق غير مشروعة.
- فإننا سنتخذ الإجراءات المناسبة، والتي قد تشمل:
- 
-حظر العميل من الطلب مستقبلاً.
-
-رفض تنفيذ الطلبات المشبوهة.
-
-الإبلاغ عن أي محاولات احتيالية.
-
-نحن نثق بعملائنا الكرام ونقدّر تعاملهم الجاد معنا، لذا نأمل الالتزام بالشفافية والمصداقية لضمان استمرارية الخدمة بأفضل شكل ممكن.
-شكراً لتفهمكم وتعاونكم .</p>
-        <button onclick="closeTermsPopup()">إغلاق</button>
-    </div>
-</div>
-    <button onclick="submitOrder()">إرسال الطلب</button>  
-    <button onclick="closeCheckout()">إغلاق</button>  
-</div>
-  <!-- زر سلة المشتريات -->    
-<button class="cart-btn" onclick="toggleCartPopup()">  
-    🛒 <span id="cart-count">0</span>  
-</button>   
       
-    <!-- قسم المنتجات -->
-    <section class="products">
-        <div class="product">
-            <img src="img/product1.jpg" alt="شبشب بيتي">
-             <div class="product-label">منتج تجريبي</div>
-            <h2>شبشب بيتي</h2>
-            <p>أفضل جودة وأفضل خامة</p>
-            <p class="p">١٠٠ جنيه</p>
-            <button class="buy-btn" data-name="شبشب بيتي" data-price="100" onclick="addToCart(this)">إضافة إلى السلة</button>   <a href="product/product1.html"><button class="openPopup2">عرض المنتج</button></a>        
+    <!-- شريط التنقل -->
+<nav class="navbar">
+    <div class="container nav-container">
+        <div class="logo fixed-part">
+            <img src="img/logo.png" alt="متجر مدينة نقادة">
         </div>
-
-        <div class="product">
-            <img src="img/product2.jpg" alt="ايفون ١١ برو ماكس ">
-             <div class="product-label">منتج تجريبي</div>
-            <h2>أيفون ١١ برو ماكس</h2>
-            <p>هاتف أبل الذكي الغني عن التعريف</p>
-            <p class="p">٢٢٠٠٠ جنيه</p>
-            <button class="buy-btn" data-name="هاتف أيفون ١١ برو ماكس" data-price="22000" onclick="addToCart(this)">إضافة إلى السلة</button>  
-               <a href="product/product2.html"><button class="openPopup2">عرض المنتج</button></a> 
-            </div> 
-<div class="product">  
-        <img src="img/product3.jpg" alt="فرشاة شعر">  
-         <div class="product-label">منتج تجريبي</div>
-        <h2>فرشاة شعر </h2>  
-        <p>خامة متينة وشعيرات قوية</p>  
-        <p class="p">٥٠ جنية </p>
-<button class="buy-btn" data-name=" فرشاة شعر " data-price="50" onclick="addToCart(this)">إضافة إلى السلة</button> 
-   <a href="product/product3.html"><button class="openPopup2">عرض المنتج</button></a> 
-</div>
-<div class="product">  
-        <img src="img/product4.jpg" alt="شبشب بيتي أسود">  
-         <div class="product-label">منتج تجريبي</div>
-        <h2> شبشب بيتي أسود </h2>  
-        <p>جودة جيدة ومتينة بلون جميل</p>  
-        <p class="p">٩٠ جنية </p>
-
-<button class="buy-btn" data-name="شبشب بيتي أسود" data-price="90" onclick="addToCart(this)">إضافة إلى السلة</button>
-   <a href="product/product4.html"><button class="openPopup2">عرض المنتج</button></a> 
-</div> 
- </section>  
- </div>
-         
-<div class="promo-section">
-  <div class="promo-card">
-    <img src="img/shop-now.jpg" alt="التسوق الإلكتروني">
-    
-    <div class="promo-content">
-      <h2>تسوق من بيتك</h2>
-      <p>لا داعي للتعب الآن</p>
-      <a  class="btn-cta">ابدأ التسوق</a>
+        
+        <ul class="main-menu">
+            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="products.html"><i class="fas fa-store"></i> المنتجات</a></li>
+            <li><a href="categories.html"><i class="fas fa-list"></i> الأقسام</a></li>
+            <li><a href="offers.html"><i class="fas fa-percentage"></i> العروض</a></li>
+            <li><a href="about.html"><i class="fas fa-info-circle"></i> عنا</a></li>
+            <li><a href="contact.html"><i class="fas fa-envelope"></i> اتصل بنا</a></li>
+        </ul>
+        
+        <div class="nav-icons fixed-part">
+            <a href="favorites.html"><i class="far fa-heart"></i></a>
+            <a href="account.html"><i class="far fa-user"></i></a>
+            <a href="#" class="cart-icon-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </a>    
+        </div>
     </div>
+</nav>
+<br><br><br><br><br><br>    
+    <!-- قسم الهيرو -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>متجر مدينة نقادة</h1>
+            <p>كل ما تحتاجه في مكان واحد مع خدمة التوصيل السريع</p>
+            <a href="products.html" class="btn">تسوق الآن</a>
+        </div>
+    </section>
+ 
+  <!-- ضع هذا الكود قبل </body> مباشرة -->
+<div id="chatbot-container">
+    <div class="chatbot-header">
+        <h3>مساعد المتجر الذكي <i class="fas fa-robot"></i></h3>
+        <button class="close-chatbot">&times;</button>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages"></div>
+    <div class="quick-questions">
+        <button class="quick-btn" data-question="ما هي أوقات العمل؟"><i class="far fa-clock"></i> أوقات العمل</button>
+        <button class="quick-btn" data-question="ما هي طرق الدفع المتاحة؟"><i class="far fa-credit-card"></i> طرق الدفع</button>
+        <button class="quick-btn" data-question="كيفية متابعة الطلب؟"><i class="fas fa-truck"></i> متابعة الطلب</button>
+    </div>
+    <div class="chatbot-input">
+        <input type="text" id="user-input" placeholder="اكتب سؤالك هنا...">
+        <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<button id="chatbot-toggler" class="floating-btn pulse">
+    <i class="fas fa-comments"></i>
+</button>
+
+<style>
+    /* تنسيقات المساعد الذكي */
+    #chatbot-container {
+        position: fixed;
+        bottom: 80px;
+        left: 20px;
+        width: 350px;
+        max-height: 60vh;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 30px rgba(0,0,0,0.2);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        font-family: 'Tajawal', sans-serif;
+        transform: scale(0.95);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    #chatbot-container.show {
+        transform: scale(1);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .chatbot-header {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chatbot-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .chatbot-header i {
+        color: #ffcc00;
+    }
+
+    .close-chatbot {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chatbot-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message {
+        padding: 10px 15px;
+        border-radius: 18px;
+        max-width: 80%;
+        line-height: 1.5;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .user-message {
+        background: #3498db;
+        color: white;
+        margin-left: auto;
+        border-bottom-right-radius: 5px;
+    }
+
+    .bot-message {
+        background: white;
+        color: #333;
+        margin-right: auto;
+        border-bottom-left-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .quick-questions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 12px;
+        background: #f0f0f0;
+        border-top: 1px solid #ddd;
+    }
+
+    .quick-btn {
+        background: white;
+        border: 1px solid #ddd;
+        color: #333;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s;
+    }
+
+    .quick-btn:hover {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+
+    .chatbot-input {
+        display: flex;
+        padding: 12px;
+        background: white;
+        gap: 8px;
+    }
+
+    #user-input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        outline: none;
+    }
+
+    #send-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .floating-btn {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @media (max-width: 480px) {
+        #chatbot-container {
+            width: 90%;
+            left: 5%;
+            bottom: 70px;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatbot = document.getElementById('chatbot-container');
+    const toggler = document.getElementById('chatbot-toggler');
+    const closeBtn = document.querySelector('.close-chatbot');
+    
+    // الأسئلة والأجوبة
+    const QnA = {
+        "ما هي أوقات العمل؟": "أوقات العمل من الأحد إلى الخميس، من 9 صباحاً حتى 5 مساءً.",
+        "ما هي طرق الدفع المتاحة؟": "نقبل الدفع عند الاستلام وبالبطاقات الائتمانية (Visa/Mastercard).",
+        "كيفية متابعة الطلب؟": "سيصلك رابط متابعة الطلب على الواتساب بعد تأكيد الشراء.",
+        "default": "للأسف لا أملك إجابة على سؤالك. للاستفسارات الأخرى، يرجى التواصل على الرقم 0123456789"
+    };
+
+ // فتح/إغلاق الشات بوت
+toggler.addEventListener('click', function() {
+    chatbot.classList.toggle('show');
+    
+    if (chatbot.classList.contains('show')) {
+        // رسالة ترحيبية عند الفتح لأول مرة
+        if (!chatbot.dataset.opened) {
+            addMessage("مرحباً بك! كيف يمكنني مساعدتك؟", 'bot');
+            chatbot.dataset.opened = 'true';
+        }
+    }
+});
+    // إغلاق الشات بوت
+    closeBtn.addEventListener('click', function() {
+        chatbot.classList.remove('show');
+    });
+
+    // الأزرار السريعة
+    document.querySelectorAll('.quick-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const question = this.getAttribute('data-question');
+            addMessage(question, 'user');
+            setTimeout(() => {
+                addMessage(QnA[question], 'bot');
+            }, 800);
+        });
+    });
+
+    // إرسال الرسائل
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    document.getElementById('user-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    function sendMessage() {
+        const input = document.getElementById('user-input');
+        const message = input.value.trim();
+        
+        if (message) {
+            addMessage(message, 'user');
+            input.value = '';
+            
+            setTimeout(() => {
+                const response = QnA[message] || QnA.default;
+                addMessage(response, 'bot');
+            }, 800);
+        }
+    }
+
+    function addMessage(text, sender) {
+        const messagesContainer = document.getElementById('chatbot-messages');
+        const messageElement = document.createElement('div');
+        messageElement.className = `message ${sender}-message`;
+        messageElement.innerHTML = `<div>${text}</div>`;
+        messagesContainer.appendChild(messageElement);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+});
+</script>  
+    <!-- شريط البحث -->
+    <div class="search-bar">
+        <div class="container">
+            <div class="search-container">
+                <input type="text" placeholder="ابحث عن منتجاتك المفضلة...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- قسم المنتجات المميزة -->
+    <div class="container">
+        <div class="section-title">
+            <h2>منتجات مميزة</h2>
+        </div>
+        
+        <div class="products">
+            <!-- المنتج 1 -->
+            <div class="product">
+                <div class="product-badges">
+                    <span class="product-label">جديد</span>
+                    <span class="best-seller">الأكثر مبيعاً</span>
+                </div>
+                <div class="product-image-container">
+                    <img src="img/product1.jpg" alt="شبشب بيتي" loading="lazy" width="300" height="300">
+                    <div class="product-actions">
+                        <button class="quick-view" data-product="product1">معاينة سريعة</button>
+                     <button 
+    class="add-to-wishlist"
+    data-id="1" 
+    data-name="شبشب بيتي"
+    data-price="199"
+    data-image="img/product1.jpg">
+    <i class="far fa-heart"></i>
+</button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h2>شبشب بيتي</h2>
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>(24)</span>
+                    </div>
+                    <p class="product-desc">أفضل جودة وأفضل خامة</p>
+                    <div class="product-price">
+                        <span class="current-price">١٠٠ جنيه</span>
+                        <span class="old-price">١٥٠ جنيه</span>
+                        <span class="discount">-33%</span>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="buy-btn" data-name="شبشب بيتي" data-price="100">
+                            <i class="fas fa-shopping-cart"></i> إضافة للسلة
+                        </button>
+                        <a href="product/product1.html" class="view-btn">
+                            <i class="fas fa-eye"></i> التفاصيل
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- المنتج 2 -->
+            <div class="product">
+                <div class="product-badges">
+                    <span class="best-seller">الأكثر مبيعاً</span>
+                </div>
+                <div class="product-image-container">
+                    <img src="img/product2.jpg" alt="ايفون 11 برو ماكس" loading="lazy" width="300" height="300">
+                    <div class="product-actions">
+                        <button class="quick-view" data-product="product2">معاينة سريعة</button>
+                    <button 
+    class="add-to-wishlist"
+    data-id="2" 
+    data-name="هاتف أيفون ١١ برو ماكس"
+    data-price="22000"
+    data-image="img/product2.jpg">
+    <i class="far fa-heart"></i>
+</button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h2>أيفون 11 برو ماكس</h2>
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <span>(18)</span>
+                    </div>
+                    <p class="product-desc">هاتف أبل الذكي الغني عن التعريف</p>
+                    <div class="product-price">
+                        <span class="current-price">٢٢٠٠٠ جنيه</span>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="buy-btn" data-name="هاتف أيفون 11 برو ماكس" data-price="22000">
+                            <i class="fas fa-shopping-cart"></i> إضافة للسلة
+                        </button>
+                        <a href="product/product2.html" class="view-btn">
+                            <i class="fas fa-eye"></i> التفاصيل
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- المنتج 3 -->
+            <div class="product">
+                <div class="product-badges">
+                    <span class="product-label">عرض محدود</span>
+                </div>
+                <div class="product-image-container">
+                    <img src="img/product3.jpg" alt="فرشاة شعر" loading="lazy" width="300" height="300">
+                    <div class="product-actions">
+                        <button class="quick-view" data-product="product3">معاينة سريعة</button>
+                     <button 
+    class="add-to-wishlist"
+    data-id="3" 
+    data-name="فرشاة شعر"
+    data-price="50"
+    data-image="img/product3.jpg">
+    <i class="far fa-heart"></i>
+</button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h2>فرشاة شعر</h2>
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <span>(32)</span>
+                    </div>
+                    <p class="product-desc">خامة متينة وشعيرات قوية</p>
+                    <div class="product-price">
+                        <span class="current-price">٥٠ جنيه</span>
+                        <span class="old-price">٧٠ جنيه</span>
+                        <span class="discount">-29%</span>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="buy-btn" data-name="فرشاة شعر" data-price="50">
+                            <i class="fas fa-shopping-cart"></i> إضافة للسلة
+                        </button>
+                        <a href="product/product3.html" class="view-btn">
+                            <i class="fas fa-eye"></i> التفاصيل
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- المنتج 4 -->
+            <div class="product">
+                <div class="product-image-container">
+                    <img src="img/product4.jpg" alt="شبشب بيتي أسود" loading="lazy" width="300" height="300">
+                    <div class="product-actions">
+                        <button class="quick-view" data-product="product4">معاينة سريعة</button>
+                    <button 
+    class="add-to-wishlist"
+    data-id="4" 
+    data-name="شبشب بيتي أسود"
+    data-price="90"
+    data-image="img/product4.jpg">
+    <i class="far fa-heart"></i>
+</button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h2>شبشب بيتي أسود</h2>
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <i class="far fa-star"></i>
+                        <span>(12)</span>
+                    </div>
+                    <p class="product-desc">جودة جيدة ومتينة بلون جميل</p>
+                    <div class="product-price">
+                        <span class="current-price">٩٠ جنيه</span>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="buy-btn" data-name="شبشب بيتي أسود" data-price="90">
+                            <i class="fas fa-shopping-cart"></i> إضافة للسلة
+                        </button>
+                        <a href="product/product4.html" class="view-btn">
+                            <i class="fas fa-eye"></i> التفاصيل
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- قسم العروض -->
+    <div class="container">
+        <div class="promo-section">
+            <div class="promo-card">
+                <img src="img/shop-now.jpg" alt="التسوق الإلكتروني">
+                <div class="promo-content">
+                    <h2>خصم يصل إلى 30%</h2>
+                    <p>استفد من عروضنا الخاصة لفترة محدودة على مجموعة مختارة من المنتجات</p>
+                    <a href="offers.html" class="btn-cta">استعرض العروض</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- قسم المنتجات الجديدة -->
+    <div class="container">
+        <div class="section-title">
+            <h2>وصل حديثاً</h2>
+        </div>
+        
+        <div class="products">
+            <!-- المنتج 5 -->
+            <div class="product">
+                <div class="product-badges">
+                    <span class="product-label">جديد</span>
+                </div>
+                <div class="product-image-container">
+                    <img src="img/product5.jpg" alt="طلاء أظافر" loading="lazy" width="300" height="300">
+                    <div class="product-actions">
+                        <button class="quick-view" data-product="product5">معاينة سريعة</button>
+                        <button class="add-to-wishlist"><i class="far fa-heart"></i></button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h2>طلاء أظافر</h2>
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <span>(8)</span>
+                    </div>
+                    <p class="product-desc">طلاء أظافر بلون جميل ولمعة ساحرة</p>
+                    <div class="product-price">
+                        <span class="current-price">٣٠ جنيه</span>
+                        <span class="old-price">٤٥ جنيه</span>
+                        <span class="discount">-33%</span>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="buy-btn" data-name="طلاء أظافر" data-price="30">
+                            <i class="fas fa-shopping-cart"></i> إضافة للسلة
+                        </button>
+                        <a href="product/product5.html" class="view-btn">
+                            <i class="fas fa-eye"></i> التفاصيل
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- المنتج 6 -->
+            <div class="product">
+                <div class="product-badges">
+                    <span class="product-label">جديد</span>
+                </div>
+                <div class="product-image-container">
+                    <img src="img/product6.jpg" alt="حذاء رياضي" loading="lazy" width="300" height="300">
+                    <div class="product-actions">
+                        <button class="quick-view" data-product="product6">معاينة سريعة</button>
+                        <button class="add-to-wishlist"><i class="far fa-heart"></i></button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h2>حذاء رياضي</h2>
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <span>(15)</span>
+                    </div>
+                    <p class="product-desc">حذاء رياضي متين وقوي للجري والأنشطة</p>
+                    <div class="product-price">
+                        <span class="current-price">٦٠ جنيه</span>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="buy-btn" data-name="حذاء رياضي" data-price="60">
+                            <i class="fas fa-shopping-cart"></i> إضافة للسلة
+                        </button>
+                        <a href="product/product6.html" class="view-btn">
+                            <i class="fas fa-eye"></i> التفاصيل
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- المنتج 7 -->
+            <div class="product">
+                <div class="product-badges">
+                    <span class="product-label">جديد</span>
+                    <span class="best-seller">الأكثر مبيعاً</span>
+                </div>
+                <div class="product-image-container">
+                    <img src="img/product7.jpg" alt="كريم كريفي" loading="lazy" width="300" height="300">
+                    <div class="product-actions">
+                        <button class="quick-view" data-product="product7">معاينة سريعة</button>
+                        <button class="add-to-wishlist"><i class="far fa-heart"></i></button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h2>كريم كريفي</h2>
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>(28)</span>
+                    </div>
+                    <p class="product-desc">للحصول على بشرة صحية ونضرة</p>
+                    <div class="product-price">
+                        <span class="current-price">١٠٠ جنيه</span>
+                        <span class="old-price">١٥٠ جنيه</span>
+                        <span class="discount">-33%</span>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="buy-btn" data-name="كريم كريفي" data-price="100">
+                            <i class="fas fa-shopping-cart"></i> إضافة للسلة
+                        </button>
+                        <a href="product/product7.html" class="view-btn">
+                            <i class="fas fa-eye"></i> التفاصيل
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- المنتج 8 -->
+            <div class="product">
+                <div class="product-badges">
+                    <span class="product-label">جديد</span>
+                </div>
+                <div class="product-image-container">
+                    <img src="img/product8.jpg" alt="دبدوب كبير" loading="lazy" width="300" height="300">
+                    <div class="product-actions">
+                        <button class="quick-view" data-product="product8">معاينة سريعة</button>
+                        <button class="add-to-wishlist"><i class="far fa-heart"></i></button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h2>دبدوب بحجم كبير</h2>
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <span>(10)</span>
+                    </div>
+                    <p class="product-desc">هدية مثالية لعيد الميلاد</p>
+                    <div class="product-price">
+                        <span class="current-price">١٥٠ جنيه</span>
+                    </div>
+                    <div class="product-buttons">
+                        <button class="buy-btn" data-name="دبدوب كبير" data-price="150">
+                            <i class="fas fa-shopping-cart"></i> إضافة للسلة
+                        </button>
+                        <a href="product/product8.html" class="view-btn">
+                            <i class="fas fa-eye"></i> التفاصيل
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- فوتر -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>متجر مدينة نقادة</h3>
+                    <p>أول متجر إلكتروني في مدينة نقادة، نقدم لكم أفضل المنتجات بأسعار تنافسية مع خدمة التوصيل السريع.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>روابط سريعة</h3>
+                    <ul>
+                        <li><a href="index.html">الرئيسية</a></li>
+                        <li><a href="products.html">المنتجات</a></li>
+                        <li><a href="offers.html">العروض</a></li>
+                        <li><a href="about.html">عن المتجر</a></li>
+                        <li><a href="contact.html">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>خدمة العملاء</h3>
+                    <ul>
+                        <li><a href="faq.html">الأسئلة الشائعة</a></li>
+                        <li><a href="shipping.html">الشحن والتوصيل</a></li>
+                        <li><a href="returns.html">سياسة الإرجاع</a></li>
+                        <li><a href="privacy.html">سياسة الخصوصية</a></li>
+                        <li><a href="terms.html">الشروط والأحكام</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>اتصل بنا</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> مدينة نقادة، قنا، مصر</li>
+                        <li><i class="fas fa-phone"></i> 01092182832</li>
+                        <li><i class="fas fa-envelope"></i> info@ngada-shop.com</li>
+                        <li><i class="fas fa-clock"></i> يومياً من 9 ص إلى 11 م</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 متجر مدينة نقادة. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+<!-- نافذة السلة -->
+<div class="cart-popup" id="cart-window">
+  <div class="cart-header">
+    <h2><i class="fas fa-shopping-cart"></i> سلة التسوق</h2>
+   <button class="close-cart-btn" onclick="closeCart()">
+    <i class="fas fa-times"></i>
+</button>
+  </div>
+  <ul id="cart-items"></ul>
+  <div class="cart-total">
+    الإجمالي: <span id="total-price">0</span> جنيه
+  </div>
+  <div class="cart-buttons">
+    <button onclick="clearCart()"><i class="fas fa-trash"></i> إفراغ السلة</button>
+<button class="final-checkout-btn" onclick="showCheckoutForm()">
+  <i class="fas fa-check"></i> إتمام الطلب
+</button>
   </div>
 </div>
-
-    <!-- قسم المنتجات -->
-    <section class="products">
-        <div class="product">
-            <img src="img/product5.jpg" alt="ملخص دراسي">
-             <div class="product-label">منتج تجريبي</div>
-            <h2>طلاء اظافر </h2>
-            <p>طلاء اظافر من شركة ابو النور للعطور بلون جميل ولمعة ساحرة للتألق</p>
-            <p class="p">٣٠ جنيه</p>
-            <button class="buy-btn" data-name="طلاء اظافر" data-price="30" onclick="addToCart(this)">إضافة إلى السلة</button>
-           <a href="product/product5.html"><button class="openPopup2">عرض المنتج</button></a> 
+   
+    <!-- نافذة الدفع -->
+    <div id="checkout-form" class="hidden">
+    <h3>إدخال بيانات الطلب</h3>
+    <input type="text" id="customer-name" placeholder="الاسم بالكامل" required>
+    <input type="tel" id="customer-phone" placeholder="رقم الهاتف" required>
+    <input type="tel" id="customer-whatsapp" placeholder="رقم الواتساب (اختياري)">
+    <input type="text" id="customer-address" placeholder="العنوان بالتفصيل" required>     
+        <h4>طريقة الدفع</h4>
+        <select id="payment-method" onchange="togglePaymentInfo()">
+            <option value="cash">الدفع عند الاستلام</option>
+            <option value="fawry">فوري</option>
+            <option value="vodafone-cash">فودافون كاش</option>
+        </select>
+        
+        <div id="fawry-info" class="hidden">
+            <h4>بيانات الدفع عبر فوري:</h4>
+            <p><strong>رقم الحساب:</strong> 123456789</p>
+            <p><strong>اسم المستفيد:</strong> متجر مدينة نقادة</p>
+            <p>برجاء إرسال صورة الإيصال على الواتساب بعد الدفع</p>
         </div>
-
-        <div class="product">
-            <img src="img/product6.jpg" alt="حذاء رياضي">
-             <div class="product-label">منتج تجريبي</div>
-            <h2>حذاء رياضي</h2>
-            <p>حذاء رياضي متين وقوي يستحمل الجري وكل الانشطة الرياضية</p>
-            <p class="p">٦٠ جنيه</p>
-            <button class="buy-btn" data-name="حذاء رياضي" data-price="60" onclick="addToCart(this)">إضافة إلى السلة</button>
-          <a href="product/product6.html"><button class="openPopup2">عرض المنتج</button></a> 
-      </div>      
-<div class="product">  
-        <img src="img/product7.jpg" alt="كريم كريفي">  
-         <div class="product-label">منتج تجريبي</div>
-        <h2>كريم كريفي</h2>  
-        <p>للحصول على بشرة صحية ونضرة وداعآ للتجاعيد </p>  
-        <p class="p">١٠٠ جنية </p>
-
-<button class="buy-btn" data-name="كريم كريفي" data-price="100" onclick="addToCart(this)">إضافة إلى السلة</button>
-           <a href="product/product7.html"><button class="openPopup2">عرض المنتج</button></a>  
-</div>
-
-<div class="product">  
-        <img src="img/product8.jpg" alt="منتج">  
-         <div class="product-label">منتج تجريبي</div>
-        <h2>دبدوب بحجم كبير  </h2>  
-        <p>هل تبحث عن هدية لعيد ميلاد أحدما ؟ لقد وجدت الهدية المناسبة لك </p>  
-        <p class="p">١٥٠ جنية </p>
-
-<button class="buy-btn" data-name="دبدوب كبير" data-price="150" onclick="addToCart(this)">إضافة إلى السلة</button>
-           <a href="product/product8.html"><button class="openPopup2">عرض المنتج</button></a> 
-</div> 
- </section>  
- </div>   
-    <!-- الفوتر -->
-     <footer>
-        <p>جميع الحقوق محفوظة &copy; 2025</p>
-        <div class="social-icons">
-    <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
-    <a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
-    <a href="https://wa.me/123456789" target="_blank"><i class="fab fa-whatsapp"></i></a>
-</div> 
-
-    </footer>
-
-    <script src="js/script.js"></script>
-    <div class="popup-overlay" id="popup-overlay" onclick="closeAllPopups()"></div>
+        
+        <div id="vodafone-info" class="hidden">
+            <h4>بيانات الدفع عبر فودافون كاش:</h4>
+            <p><strong>رقم المحفظة:</strong> 0100000000</p>
+            <p>برجاء إرسال صورة الإيصال على الواتساب بعد الدفع</p>
+        </div>
+        
+        <label>
+            <input type="checkbox" id="terms-checkbox" required>
+            أوافق على <a href="terms.html" target="_blank">الشروط والأحكام</a>
+        </label>
+        
+        <div class="form-buttons">
+      <button type="button" class="submit-btn" onclick="submitOrder()">
+    إتمام الطلب
+</button>
+            <button onclick="closeCheckout()" class="btn btn-secondary">إلغاء</button>
+        </div>
     </div>
+    <script src="js/script.js"></script>
+ 
+</body>
 </body>
 </html>
